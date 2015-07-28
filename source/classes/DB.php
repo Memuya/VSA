@@ -10,7 +10,7 @@ class DB {
 	protected $db;
 	protected $db_server = "mysql";
 	protected $host = "localhost";
-	protected $dbname = "dbname";
+	protected $dbname = "vsa";
 	protected $user = "root";
 	protected $pass = "";
 	/**
