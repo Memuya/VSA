@@ -12,7 +12,7 @@ if(!empty($_POST['g-recaptcha-response'])) {
 	//get the recaptcha field
 	$recaptcha = $_POST['g-recaptcha-response'];
 	//secret key given by Google
-	$secret = '6LekSwoTAAAAALHhOyzoLOd2sp489U_Zbxabf6GF';
+	$secret = 'YOUR_SECRET_KEY';
 
 	//validate via Google. Returns a json array
 	$response = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$secret."&response=".$recaptcha), true);
