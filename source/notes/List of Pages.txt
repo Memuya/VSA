@@ -1,0 +1,101 @@
+Index
+- Welcome message
+	- [ADMIN] Edit
+- Areas of Interest
+- Scrolling ads
+	[ADMIN] Edit
+- Useful links
+
+News
+- Read news articles
+	- [ADMIN] Edit
+	- [ADMIN] Delete
+
+Courses
+- Apply for active courses
+- Preview content (flash animation)
+
+Join VSA
+- Select membership type
+- Register account and personal information
+
+Sponsors
+- List of sponsors
+
+Executive
+- List of executives
+
+Contact
+- Email VSA support
+
+Privacy Policy
+- Read the latest privacy policy
+
+
+ACCOUNT
+-------
+
+Details
+- Update current details
+
+Pay VSA Membership Fees
+- Information on how to pay membership fees and their price
+
+OzVac Newsletter
+- Read/download newsletters (PDF)
+
+My Enrolment
+- List of courses the user has applied for
+
+
+CONTROL PANNEL
+--------------
+
+Welcome Message
+- Update the welcome message on the home page
+
+Privacy Policy
+- Update the current privacy policy
+
+Users
+- List of users
+- Edit user detials
+- Delete users
+- Reset user password
+
+Add News Article
+- Add a  news article
+
+News Articles
+- List of news articles
+- Edit news articles
+- Delete articles
+
+Advertisements
+- List of active advertisements
+
+Pending Advertisements
+- List of advertisements that are pending for approval
+
+Add Course
+- Add a new course
+
+Courses
+- List of courses
+- Edit courses
+- Delete courses
+
+Add Executive
+- Add a executive
+
+Executive
+- List of executives
+- Edit executives
+- Delete executives
+
+Add Newsletter
+- Upload an OzVac newsletter
+
+Newsletters
+- List of newsletters
+- Delete newsletters
