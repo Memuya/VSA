@@ -1,13 +1,13 @@
 <?php
 /**
-* A class to handle all output errors to a user
-*
-* @version 1.0
-* @author Mehmet Uyanik
-*/
+ * The Errors class can be used to help display error messages to a users.
+ * 
+ * @Version 1.1
+ * @Year 2015
+ * @Author Mehmet Uyanik
+ */
 class Errors {
 	private static $errors = [];
-
 	/**
 	* Check if an error exist inside the errors array
 	*/
@@ -29,7 +29,7 @@ class Errors {
 			($style !== 0) ? $m .='<div class="notice-box red-notice">' : null;
 			
 			foreach(self::$errors as $e)
-				$m .= $e."<br>";
+				$m .= (!empty($e)) ? $e."<br>" : null;
 			
 			($style !== 0) ? $m .= '</div>' : null;
 			
@@ -52,7 +52,6 @@ class Errors {
 		else
 			return ($message === 0) ? null : (($style === 1) ? '<div class="notice-box green-notice">'.$message.'</div>' : $message);
 	}
-
 	/**
 	* Returns the amount of errors stored in the $errors array
 	* 
@@ -60,14 +59,22 @@ class Errors {
 	public function getCount() {
 		return count(self::$errors);
 	}
-
 	/**
 	* Add a string to the $errors array
 	* 
 	* @param string $message
 	*/
-	public function add($message) {
+	public static function add($message) {
 		self::$errors[] = $message;
+	}
+	/**
+	* Clear the errors array
+	*/
+	public static function clear() {
+		//self::$errors = [];
+		if(self::hasErrors())
+			for($x = 0; $x < self::getCount(); $x++)
+				self::$errors[$x] = "";
 	}
 	
 }
