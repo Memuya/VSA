@@ -21,7 +21,7 @@ $ads = $sponsors->getAds();
 
 			<div class="ad-box">
 				<a href="<?=$ad->website;?>" target="_blank">
-					<img src="<?=PATH."img/sponsors/".$ad->img;?>">
+					<img src="<?=PATH."img/sponsors/".$ad->adID.".".$ad->img_ext;?>">
 				</a>
 				<div><a href="<?=$ad->website;?>" target="_blank"><?=$ad->company;?></a></div>
 			</div>

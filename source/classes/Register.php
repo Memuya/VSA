@@ -116,8 +116,8 @@ class Register {
 
 				//prepare query
 				$insert = DB::$db->prepare("
-					INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, blocked, type, active, level) 
-					VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, '0', :type, '1', '2')
+					INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, fax, website, company, blocked, type, active, level) 
+					VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, :fax, :website, :company, '0', :type, '1', '2')
 				") or die(SQL_ERROR);
 
 				//execute query
@@ -134,6 +134,9 @@ class Register {
 					':postcode' => $this->postcode,
 					':country' => $this->country,
 					':telephone' => $this->telephone,
+					':fax' => $this->fax,
+					':website' => $this->website,
+					':company' => $this->company,
 					':type' => $type_num
 				]);
 			}
