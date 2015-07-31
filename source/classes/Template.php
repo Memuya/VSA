@@ -94,6 +94,6 @@ class Template {
 	* @param string $file
 	*/
 	public function load($file) {
-		return $_SERVER['DOCUMENT_ROOT'].'/vsoa/'.$file;
+		return $_SERVER['DOCUMENT_ROOT'].'/vsa/'.$file;
 	}
 }
