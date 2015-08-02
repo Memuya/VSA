@@ -47,7 +47,7 @@ class Login {
 					Errors::add("Your account has not been activated as of yet. Please <a href=\"".PATH."contact\">contact us</a> if you have any questions.");
 				else if($r->blocked == 1)
 					Errors::add("Your account has been blocked. Please <a href=\"".PATH."contact\">contact us</a> to sort this out.");
-				else if($r->payment_made === '0' || $date_diff <= 0)
+				else if($r->payment_made === '0' && $date_diff <= 0)
 					Errors::add("Your payment has not been received as of yet. It has been 12 days since your account has been created. Once we have received your membership payment, you will be able to log into your account.");
 				else {
 					//set login session
