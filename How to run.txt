@@ -1,0 +1,13 @@
+STARTING OFF
+1. Download and install XAMPP.
+2. Navigate to the "xampp" directory and find the folder "htdocs".
+3. Place all files inside the "source" folder on this repository into the "htdocs" folder.
+4. Go to "localhost/phpmyadmin/" in your browser.
+5. Create a new database called VSA.
+6. Import the sql file into the VVSA database.
+
+START XAMPP
+1. Go to the "xampp" directory
+2. Click on "xampp-control". A window will appear.
+3. Press "Start" for Apache and "MySQL"
+3. Go to "localhost/vsa/" in your browser.
