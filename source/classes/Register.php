@@ -117,7 +117,7 @@ class Register {
 				//prepare query
 				$insert = DB::$db->prepare("
 					INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, fax, website, company, blocked, type, active, level, payment_made, date_created, payment_due_date) 
-					VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, :fax, :website, :company, '0', :type, '1', '2', '0', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 14 DAY)))
+					VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, :fax, :website, :company, '0', :type, '1', '2', '0', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 31 DAY)))
 				") or die(SQL_ERROR);
 
 				//execute query
