@@ -48,7 +48,7 @@ class User extends Pagination {
 	* Returns all fields in the users table
 	*
 	*/
-	public function getAll($page = 1, $limit = 10) {
+	public function getAll($page = 1, $limit = 100) {
 		$this->amount = ($page - 1) * $limit;
 		$this->limit = $limit;
 		$this->page = $page;
@@ -171,12 +171,15 @@ class User extends Pagination {
 	* @param string $postcode
 	* @param string $country
 	* @param string $telephone
+	* @param string $website
+	* @param string $fax
 	* @param string $blocked
 	* @param string $type
 	* @param string $active
 	* @param string $level
+	* @param string $payment_made
 	*/
-	public function edit($id, $username, $title, $fname, $lname, $email, $address, $suburb, $state, $postcode, $country, $telephone, $blocked, $type, $active, $level) {
+	public function edit($id, $username, $title, $fname, $lname, $email, $address, $suburb, $state, $postcode, $country, $telephone, $website, $fax, $blocked, $type, $active, $level, $payment_made) {
 		$id = (int)$id;
 		$username = Validate::post($username);
 		$title = Validate::post($title);
@@ -188,8 +191,11 @@ class User extends Pagination {
 		$postcode = Validate::post($postcode);
 		$country = Validate::post($country);
 		$telephone = Validate::post($telephone);
+		$website = Validate::post($website);
+		$fax = Validate::post($fax);
 		$email = Validate::post($email);
 		$type = Validate::post($type);
+		$payment_made = Validate::post($payment_made);
 
 		if(empty($id) || empty($username) || empty($fname) || empty($lname) || empty($email) || empty($address) || empty($suburb) || empty($state) || empty($postcode) || empty($country) || empty($telephone)) {
 			Errors::add("All fields are required");
@@ -286,6 +292,10 @@ class User extends Pagination {
 			else if($email_c != 0)
 				Errors::add("That email address is already in-use");
 
+			//validate website
+			if(!empty($website) && !filter_var($website, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+				Errors::add("The Website URL must start with \"<b>http://</b>\"");
+
 			if(!Errors::hasErrors()) {
 				//prepare query
 				$insert = DB::$db->prepare("
@@ -301,10 +311,13 @@ class User extends Pagination {
 					postcode = :postcode, 
 					country = :country, 
 					telephone = :telephone, 
+					website = :website, 
+					fax = :fax, 
 					blocked = :blocked, 
 					type = :type, 
 					active = :active, 
-					level = :level
+					level = :level,
+					payment_made = :payment_made
 					WHERE id = :id
 				");
 
@@ -321,10 +334,13 @@ class User extends Pagination {
 					':postcode' => $postcode,
 					':country' => $country,
 					':telephone' => $telephone,
+					':website' => $website,
+					':fax' => $fax,
 					':blocked' => $blocked,
 					':type' => $type,
 					':active' => $active,
 					':level' => $level,
+					':payment_made' => $payment_made,
 					':id' => $id
 				]);
 			}
