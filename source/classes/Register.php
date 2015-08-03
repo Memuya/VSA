@@ -20,6 +20,8 @@ class Register {
 	* @param string $country
 	* @param string $telephone
 	* @param string $email
+	* @param string $website
+	* @param string $fax
 	*/
 	public function __construct($username, $password, $r_password, $type, $company, $title, $fname, $lname, $address, $suburb, $state, $postcode, $country, $telephone, $email, $website, $fax) {
 		$this->username = Validate::post($username);
