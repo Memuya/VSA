@@ -7,7 +7,12 @@ A re-design & re-build of the Vacuum Society of Australia's Website.
 - PHP
 - JS/Jquery
 - Mysql/PDO
-- CKEditor
+
+Helpful Plugins used
+- Stacktable (for tables)
+- CKEditor (WYSIWYG editor)
+- Font Awesome
+- JQuery Marquee plugin
 
 ## Administrative Features
 - Update the welcome message on the front page
