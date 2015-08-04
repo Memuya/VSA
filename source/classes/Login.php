@@ -31,12 +31,14 @@ class Login {
 			$c = $q->rowCount();
 			$r = $q->fetch(PDO::FETCH_OBJ);
 
-			//todays timestamp
-			$today = time();
-			//timestamp of the due date for payment
-			$payment_due_date = ($r->payment_due_date);
-			//the difference between the 2 timestamps
-			$date_diff = $payment_due_date - $today;
+			if($c !== 0) {
+				//todays timestamp
+				$today = time();
+				//timestamp of the due date for payment
+				$payment_due_date = ($r->payment_due_date);
+				//the difference between the 2 timestamps
+				$date_diff = $payment_due_date - $today;
+			}
 
 			if($c == 0)
 				Errors::add("Username does not exist");
@@ -47,8 +49,8 @@ class Login {
 					Errors::add("Your account has not been activated as of yet. Please <a href=\"".PATH."contact\">contact us</a> if you have any questions.");
 				else if($r->blocked == 1)
 					Errors::add("Your account has been blocked. Please <a href=\"".PATH."contact\">contact us</a> to sort this out.");
-				else if($r->payment_made === '0' && $date_diff <= 0)
-					Errors::add("Your payment has not been received as of yet. It has been 12 days since your account has been created. Once we have received your membership payment, you will be able to log into your account.");
+				else if(($r->payment_made === '0') && ($date_diff <= 0))
+					Errors::add("Your payment has not been received as of yet. It has been 31 or more days since your account has been created. Once we have received your membership payment, you will be able to log into your account.");
 				else {
 					//set login session
 					$_SESSION['logged'] = $r->id;
