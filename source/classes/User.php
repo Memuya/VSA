@@ -292,9 +292,19 @@ class User extends Pagination {
 			else if($email_c != 0)
 				Errors::add("That email address is already in-use");
 
-			//validate website
-			if(!empty($website) && !filter_var($website, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
-				Errors::add("The Website URL must start with \"<b>http://</b>\"");
+			//get type of membership of the user to validate below
+			$q = DB::$db->prepare("SELECT type FROM users WHERE id = :id");
+			$q->execute([':id' => $id]);
+			$r = $q->fetch(PDO::FETCH_OBJ);
+
+			//validate website and fax
+			if($r->type == '3') {
+				if(empty($website) || !filter_var($website, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+					Errors::add("The Website URL must start with \"<b>http://</b>\"");
+
+				if(empty($fax))
+					Errors::add("A fax number is required");
+			}
 
 			if(!Errors::hasErrors()) {
 				//prepare query
