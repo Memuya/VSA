@@ -171,6 +171,7 @@ class User extends Pagination {
 	* @param string $postcode
 	* @param string $country
 	* @param string $telephone
+	* @param string $company
 	* @param string $website
 	* @param string $fax
 	* @param string $blocked
@@ -179,7 +180,7 @@ class User extends Pagination {
 	* @param string $level
 	* @param string $payment_made
 	*/
-	public function edit($id, $username, $title, $fname, $lname, $email, $address, $suburb, $state, $postcode, $country, $telephone, $website, $fax, $blocked, $type, $active, $level, $payment_made) {
+	public function edit($id, $username, $title, $fname, $lname, $email, $address, $suburb, $state, $postcode, $country, $telephone, $company, $website, $fax, $blocked, $type, $active, $level, $payment_made) {
 		$id = (int)$id;
 		$username = Validate::post($username);
 		$title = Validate::post($title);
@@ -191,6 +192,7 @@ class User extends Pagination {
 		$postcode = Validate::post($postcode);
 		$country = Validate::post($country);
 		$telephone = Validate::post($telephone);
+		$company = Validate::post($company);
 		$website = Validate::post($website);
 		$fax = Validate::post($fax);
 		$email = Validate::post($email);
@@ -299,6 +301,8 @@ class User extends Pagination {
 
 			//validate website and fax
 			if($r->type == '3') {
+				if(empty($company))
+					Errors::add("Company name is required for corporate members");
 				if(empty($website) || !filter_var($website, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
 					Errors::add("The Website URL must start with \"<b>http://</b>\"");
 
@@ -323,6 +327,7 @@ class User extends Pagination {
 					telephone = :telephone, 
 					website = :website, 
 					fax = :fax, 
+					company = :company, 
 					blocked = :blocked, 
 					type = :type, 
 					active = :active, 
@@ -346,6 +351,7 @@ class User extends Pagination {
 					':telephone' => $telephone,
 					':website' => $website,
 					':fax' => $fax,
+					':company' => $company,
 					':blocked' => $blocked,
 					':type' => $type,
 					':active' => $active,
@@ -518,24 +524,35 @@ class User extends Pagination {
 	*/
 	public function delete($id) {
 		$q = DB::$db->prepare("
-			SELECT id
+			SELECT id, type
 			FROM users
 			WHERE id = :id
 		");
-
 		$q->execute([':id' => $id]);
-
 		$c = $q->rowCount();
+		$r = $q->fetch(PDO::FETCH_OBJ);
 
 		if($c == 0)
 			Errors::add("The user you are trying to delete does not exist");
 		else {
-			$q = DB::$db->prepare("
-				DELETE FROM users
-				WHERE id = :id
-			");
+			try {
+				//delete enrolments
+				$q = DB::$db->prepare("DELETE FROM enrolments WHERE user_id = :id");
+				$q->execute([':id' => $id]);
 
-			$q->execute([':id' => $id]);
+				if($r->type === '3') {
+					$q = DB::$db->preapre("DELETE FROM ads WHERE user_id = :id");
+					$q->execute([':id' => $id]);
+					//unlink image
+				}
+
+				//delete user
+				$q = DB::$db->prepare("DELETE FROM users WHERE id = :id");
+
+				$q->execute([':id' => $id]);
+			} catch(PDOException $ex) {
+				Errors::add($ex->getMessage());
+			}
 		}
 
 		return Errors::displayErrors("User successfully deleted!");

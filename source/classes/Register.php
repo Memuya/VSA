@@ -115,11 +115,12 @@ class Register {
 
 				//hash the password
 				$hash_pass = password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 10]);
+				$activation_code = sha1(uniqid(true));
 
 				//prepare query
 				$insert = DB::$db->prepare("
-					INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, fax, website, company, blocked, type, active, level, payment_made, date_created, payment_due_date) 
-					VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, :fax, :website, :company, '0', :type, '1', '2', '0', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 31 DAY)))
+					INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, fax, website, company, blocked, type, activation_code, active, level, payment_made, date_created, payment_due_date) 
+					VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, :fax, :website, :company, '0', :type, :activation_code, '1', '2', '0', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 31 DAY)))
 				") or die(SQL_ERROR);
 
 				//execute query
@@ -139,8 +140,17 @@ class Register {
 					':fax' => $this->fax,
 					':website' => $this->website,
 					':company' => $this->company,
-					':type' => $type_num
+					':type' => $type_num,
+					':activation_code' => $activation_code
 				]);
+
+				$user_id = DB::$db->lastInsertId();
+
+				//send an email with activation code and change success message below to reflex this
+				$message  = "Dear ".$this->title." ".$this->fname." ".$this->lname.", \r\n\r\n";
+				$message .= "Please use the link below to activate your account:\r\n";
+				$message .= PATH."activate?id=".$user_id."&code=".$activation_code;
+				mail($this->email, "Activate your VSA account!", $message);
 			}
 
 		}

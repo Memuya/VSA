@@ -36,9 +36,9 @@ $diff = $today->diff($date);
 			<section class="right-main">
 				<?php if($user->payment_made === '0'): ?>
 					<div class="notice-box yellow-notice">
-						Your VSA payment has not yet been received. You have <b><?=($diff->d);?> day<?=($diff->d !== 1) ? 's' : null;?> <?=$diff->h;?> hour<?=($diff->h !== 1) ? 's' : null;?></b> left until your account is locked.
+						Your VSA payment has not yet been received. You have <b><?=($diff->format("%d"));?> day<?=($diff->d !== 1) ? 's' : null;?></b> left until your account is locked.
 					</div>
-					<?='<pre>', print_r($diff), '</pre>';?>
+					<!--<?='<pre>', print_r($diff), '</pre>';?>-->
 				<?php elseif($user->payment_made === '1'): ?>
 					<div class="notice-box green-notice">
 						Your VSA payment has been received!

@@ -142,6 +142,7 @@ class News {
 			INNER JOIN users
 			ON news.posted_by = users.id
 			ORDER BY id DESC
+			LIMIT 0, 10
 		") or die(SQL_ERROR);
 
 		$this->count = $q->rowCount();

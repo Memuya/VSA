@@ -25,8 +25,9 @@ $payment_made = (isset($_POST['payment_made'])) ? $_POST['payment_made'] : $user
 /**
 * These fields are only updated if the user is a corporate member
 */
+$company = (isset($_POST['company'])) ? $_POST['company'] : 'N/A';
 $website = (isset($_POST['website'])) ? $_POST['website'] : 'http://www.';
-$fax = (isset($_POST['fax'])) ? $_POST['fax'] : 'N/A';
+$fax 	 = (isset($_POST['fax'])) ? $_POST['fax'] : 'N/A';
 
 echo $user->edit(
 	$id,
@@ -41,6 +42,7 @@ echo $user->edit(
 	$_POST['postcode'],
 	$_POST['country'],
 	$_POST['telephone'],
+	$company,
 	$website,
 	$fax,
 	$blocked,

@@ -96,6 +96,10 @@ include $t->load("template/header.php");
 						</tr>
 						<?php if($user->type == '3'): ?>
 							<tr>
+								<th>Company Name</th>
+								<td><input type="text" name="company" value="<?=$user->company;?>" placeholder="Company"></td>
+							</tr>
+							<tr>
 								<th>Website</th>
 								<td><input type="text" name="website" value="<?=$user->website;?>" placeholder="Website"></td>
 							</tr>

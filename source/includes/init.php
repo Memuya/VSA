@@ -20,5 +20,8 @@ session_start();
 //re-generates a new session ID each load
 session_regenerate_id(true);
 
+//turn errors off when NOT in development
+//ini_set("display_errors", false);
+
 //initilize the DB object to run its constructor which contains the connection to the database
 $con = new DB;

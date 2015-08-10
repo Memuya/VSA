@@ -28,7 +28,7 @@ class Courses {
 		$date = Validate::cp($date);
 		$time = Validate::cp($time);
 		$location = Validate::cp($location);
-		$cost = Validate::cp($cost);
+		$cost = Validate::cp(str_replace("$", "", $cost));
 
 		if(empty($code) || empty($name) || empty($duration) || empty($date) || empty($time) || empty($location) || empty($cost))
 			Errors::add("All fields are required");
@@ -70,7 +70,7 @@ class Courses {
 		$date = Validate::cp($date);
 		$time = Validate::cp($time);
 		$location = Validate::cp($location);
-		$cost = Validate::cp($cost);
+		$cost = Validate::cp(str_replace("$", "", $cost));
 		$expired = Validate::cp($expired);
 
 		if(empty($id) || empty($code) || empty($name) || empty($duration) || empty($date) || empty($time) || empty($location) || empty($cost))

@@ -7,6 +7,26 @@ class Sponsors {
 		$this->data = [];
 	}
 
+	public static function countAds($status = '1') {
+		try {
+			$q = DB::$db->prepare("
+				SELECT *, ads.id as adID
+				FROM ads
+				INNER JOIN users
+				ON users.id = ads.user_id
+				WHERE status = :status
+			") or die(SQL_ERROR);
+
+			$q->execute([':status' => $status]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
+
+		$count = $q->rowCount();
+
+		return $count;
+	}
+
 	/**
 	* Returns all active or pending ads depending on argument passed through to signature
 	* Returns all active ads by default
@@ -154,8 +174,10 @@ class Sponsors {
 				//upload image here
 				move_uploaded_file($tmp_name, "../img/sponsors/".$lastId.".".$ext);
 
+				$email_message  = 'A new advertisement has been submitted to the VSA website.';
+
 				//send an email to an administrator (all of them?) to notify them that they have a ad pending
-				//mail();
+				mail('admin@vacuumsociety.org.au', "A new advertisement has been submitted", $email_message);
 			}
 		}
 
