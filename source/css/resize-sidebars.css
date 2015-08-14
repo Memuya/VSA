@@ -1,0 +1,24 @@
+/*
+Styles used to re-flow the account page and the control panel
+*/
+.left-side {
+	float: none;
+	width: auto;
+}
+
+.right-main {
+	float: none;
+	width: auto;
+}
+
+.outer-wrapper {
+	padding: 20px 2%;
+}
+
+.resized-sidebar-menu {
+	display: block;
+}
+
+.sidebar {
+	display: none;
+}

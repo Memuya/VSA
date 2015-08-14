@@ -48,6 +48,7 @@ include $t->load("template/header.php");
 
 			<section class="right-main">
 				<div id="feedback"></div>
+
 				<form id="form">
 					<table class="style">
 						<tr>

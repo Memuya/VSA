@@ -14,6 +14,7 @@
 		<link rel="stylesheet" type="text/css" href="<?=PATH;?>css/stacktable.css">
 		<!--RE-FLOW CONTENT-->
 		<link href="<?=PATH;?>css/resize.css" media="only screen and (max-width:550px)" rel="stylesheet" type="text/css">
+		<link href="<?=PATH;?>css/resize-sidebars.css" media="only screen and (max-width:980px)" rel="stylesheet" type="text/css">
 		<!--FONT-->
 		<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
 		<!--ICONS-->

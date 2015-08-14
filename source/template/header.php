@@ -1,5 +1,10 @@
 </head>
 	<body>
+		<noscript>
+			<div class="notice-box yellow-notice" style="text-align: center; margin: 0;">
+				This site requires Javascript to be enabled to function correctly. Please enable Javascript in your browser.
+			</div>
+		</noscript>
 		<div id="overlay"></div>
 		<div class="login-box">
 				<a href="#" class="close-btn">&#10006;</a>

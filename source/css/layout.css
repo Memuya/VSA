@@ -267,6 +267,7 @@ body {
 .sidebar {
 	border: px solid #CCC;
 	margin-bottom: 5px;
+	display: block;
 }
 
 .sidebar ul {

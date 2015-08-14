@@ -79,4 +79,10 @@ $(window).resize(function() {
 		$(".main-nav").hide();
 		$(".sidebar").show();
 	}
+
+	if($(window).width() >= 980) {
+		$(".sidebar").show();
+	} else {
+		$(".sidebar").hide();
+	}
 });
