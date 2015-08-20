@@ -39,7 +39,6 @@
 			<div id="header">
 				<div class="inner-wrapper">
 					<a href="<?=PATH;?>"><img src="<?=PATH;?>img/vsa-logo.png" id="banner-logo" alt="Vaccum Society of Australia"></a>
-					<!--<a href="<?=PATH;?>"><img src="<?=PATH;?>img/logo.png" id="logo" alt="Vaccum Society of Australia"></a>-->
 					
 					<?php if(isset($_SESSION['admin'])): ?>
 

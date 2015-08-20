@@ -19,12 +19,18 @@ include $t->load("template/header.php");
 $_user = new User;
 $user = $_user->get($_SESSION["logged"]);
 
-//convert the payment due date timestamp into a date and pass it through the DateTime object
-$date = new DateTime(date('Y-m-d', $user->payment_due_date));
-//get current date information
+//get time left until payment is needed for non-course members
+//OR get time left until account expires for course members
+$date = new DateTime(date('Y-m-d', ($user->type === '4') ? $user->course_member_expiry : $user->payment_due_date));
 $today = new DateTime();
-//get the difference between the 2 dates
 $diff = $today->diff($date);
+
+/*
+//OLD DATE STUFF W/O COURSE MEMBERS STUFF
+$date = new DateTime(date('Y-m-d', $user->payment_due_date));
+$today = new DateTime();
+$diff = $today->diff($date);
+*/
 ?>	
 	<div id="page-heading">
 		<h1>Membership Payment</h1>
@@ -34,16 +40,32 @@ $diff = $today->diff($date);
 			<?php include $t->load("template/account-nav.php"); ?>
 
 			<section class="right-main">
-				<?php if($user->payment_made === '0'): ?>
+				<?php if($user->type === '4'): ?>
+					
+					<!--only display if user is a course member-->
 					<div class="notice-box yellow-notice">
-						Your VSA payment has not yet been received. You have <b><?=($diff->format("%d"));?> day<?=($diff->d !== 1) ? 's' : null;?></b> left until your account is locked.
+						Your VSA account is valid for <b><?=($diff->days);?> more day<?=($diff->d !== 1) ? 's' : null;?></b> before your <i>Course Membership</i> expires.
 					</div>
-					<!--<?='<pre>', print_r($diff), '</pre>';?>-->
-				<?php elseif($user->payment_made === '1'): ?>
-					<div class="notice-box green-notice">
-						Your VSA payment has been received!
-					</div>
+
+				<?php else: ?>
+
+					<?php if($user->payment_made === '0'): ?>
+
+						<div class="notice-box yellow-notice">
+							Your VSA payment has not yet been received. You have <b><?=($diff->format("%d"));?> day<?=($diff->d !== 1) ? 's' : null;?></b> left until your account is locked.
+						</div>
+						
+					<?php elseif($user->payment_made === '1'): ?>
+
+						<div class="notice-box green-notice">
+							Your VSA payment has been received!
+						</div>
+
+					<?php endif; ?>
+
 				<?php endif; ?>
+
+				<!--<?='<pre>', print_r($diff), '</pre>';?>-->
 
 				<p>Your <?=$user->membership;?> Member renewal fee is <b>$<?=number_format($user->price, 2);?></b>. VSA annual fees can only be paid by a cheque or the Direct Debit.</p>
 

@@ -104,23 +104,29 @@ class User extends Pagination {
 	* @param string $string
 	*/
 	public function search($string) {
-		$q = DB::$db->prepare("
-			SELECT *, users.id
-			FROM users
-			INNER JOIN membership_types
-			ON membership_types.id = users.type
-			WHERE users.username LIKE :string
-		");
+		if(!empty($string)) {
+			$q = DB::$db->prepare("
+				SELECT *, users.id
+				FROM users
+				INNER JOIN membership_types
+				ON membership_types.id = users.type
+				WHERE MATCH(users.username) AGAINST(:string IN BOOLEAN MODE)
+				OR users.username LIKE :second_string
+			");
 
-		$q->execute([':string' => '%'.$string.'%']);
+			$q->execute([
+				':string' => $string.'*',
+				':second_string' => '%'.$string.'%'
+			]);
 
-		$this->count = $q->rowCount();
+			$this->count = $q->rowCount();
 
-		if($this->count != 0)
-			while ($r = $q->fetch(PDO::FETCH_OBJ))
-				$this->data[] = $r;
-			
-		return $this->data;
+			if($this->count != 0)
+				while ($r = $q->fetch(PDO::FETCH_OBJ))
+					$this->data[] = $r;
+				
+			return $this->data;
+		}
 	}
 
 	/**
@@ -248,6 +254,8 @@ class User extends Pagination {
 				case '2':
 					break;
 				case '3':
+					break;
+				case '4':
 					break;
 				default:
 					Errors::add("An error has occured [Membership Type not set properly]");
@@ -515,6 +523,66 @@ class User extends Pagination {
 		}
 
 		return Errors::displayErrors("Password has been successfully reset!");
+	}
+
+	/**
+	* Update the password for a specific user
+	* Used in the account page
+	*
+	* @param int $id
+	* @param string $password
+	* @param string $new_password
+	* @param string $repeat_password
+	*/
+	public function changePassword($id, $password, $new_password, $repeat_password) {
+		$id = (int)$id;
+		$password = Validate::post($password);
+		$new_password = Validate::post($new_password);
+		$repeat_password = Validate::post($repeat_password);
+
+		if(empty($id) || empty($password) || empty($new_password) || empty($repeat_password))
+			Errors::add("All fields are required");
+		else {
+			//get current password info
+			try {
+				$q = DB::$db->prepare("
+					SELECT id, password
+					FROM users
+					WHERE id = :id
+				");
+				$q->execute([':id' => $id]);
+
+				$c = $q->rowCount();
+				$r = $q->fetch(PDO::FETCH_OBJ);
+			} catch(PDOException $ex) {
+				Errors::add($ex->getMessage());
+			}
+
+			
+
+			if(!password_verify($password, $r->password))
+				Errors::add("Your current password is incorrect");
+			else if($new_password !== $repeat_password)
+				Errors::add("Your new passwords do not match");
+			else {
+				//update password
+				try {
+					$q = DB::$db->prepare("
+						UPDATE users
+						SET password = :password
+						WHERE id = :id
+					");
+					$q->execute([
+						':password' => password_hash($new_password, PASSWORD_BCRYPT, ['cost' => 10]),
+						':id' => $id
+					]);
+				} catch(PDOException $ex) {
+					Errors::add($ex->getMessage());
+				}
+			}
+		}
+
+		return Errors::displayErrors("Your password has been successfully changed!");
 	}
 
 	/**

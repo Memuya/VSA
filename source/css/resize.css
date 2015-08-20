@@ -58,6 +58,10 @@ h2 {
 	display: block;
 }
 
+.resized-sidebar-menu {
+	float: none !important;
+}
+
 .main-nav {
 	height: 100%;
 	border-top: none;
@@ -73,6 +77,15 @@ h2 {
 .main-nav li a {
 	border-bottom: 1px solid rgba(0,0,0,.3);
 	border-top: 1px solid rgba(255,255,255,.3);
+}
+
+/*Removes the outer border when navigation is resized*/
+.main-nav li a:nth-child(odd) {
+	border-left: none;
+}
+
+.main-nav li a:nth-child(even) {
+	border-right: none;
 }
 
 .top-nav {
@@ -107,6 +120,7 @@ h2 {
 table.style {
 	overflow-x: auto;
 	display: block;
+	width: 100%;
 }
 
 .sponsor-wrapper {

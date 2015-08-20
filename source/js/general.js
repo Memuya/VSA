@@ -6,30 +6,32 @@ $(document).ready(function() {
 		pauseOnHover: true
 	});
 
-	//un-comment if you don't want the overlay to show when resized
-	//if($(window).width() >= 550) {
-		//deals with overlay and universal login box
-		$(".login-btn").click(function() {
-			$("#overlay").fadeIn(function() {
-				$(".login-box").fadeIn(function() {
-					$(".input-username").focus();
-				});
-			});
-			return false;
-		});
+	//add an asterisk to all required input fields on the page
+	$("input[required]").each(function() {
+		$(this).parent().prev().children().append(' <span class="text-red">*</span>');
+	});
 
-		$("#overlay").click(function() {
-			$(this).fadeOut(function() {
-				$(".login-box").fadeOut();
+	//deals with overlay and universal login box
+	$(".login-btn").click(function() {
+		$("#overlay").fadeIn(function() {
+			$(".login-box").fadeIn(function() {
+				$(".input-username").focus();
 			});
+		});
+		return false;
+	});
+
+	$("#overlay").click(function() {
+		$(this).fadeOut(function() {
 			$(".login-box").fadeOut();
 		});
+		$(".login-box").fadeOut();
+	});
 
-		$(".close-btn").click(function() {
-			$("#overlay").fadeOut();
-			$(".login-box").fadeOut();
-		});
-	//}
+	$(".close-btn").click(function() {
+		$("#overlay").fadeOut();
+		$(".login-box").fadeOut();
+	});
 	
 	//toggle navigation when menu button is clicked (resized button only displays when screen is small)
 	$(".resized-menu").click(function() {

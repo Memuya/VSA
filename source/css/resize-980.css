@@ -17,9 +17,13 @@ Styles used to re-flow the account page and the control panel
 
 .resized-sidebar-menu {
 	display: block;
-	float: left;
 }
 
 .sidebar {
 	display: none;
+}
+
+.sidebar ul li {
+	max-width: 300px;
+	width: 100%;
 }

@@ -116,6 +116,7 @@ include $t->load("template/header.php");
 									<option value="1" <?=($user->type == '1') ? 'selected' : null;?>>Student</option>
 									<option value="2" <?=($user->type == '2') ? 'selected' : null;?>>General</option>
 									<option value="3" <?=($user->type == '3') ? 'selected' : null;?>>Corporate</option>
+									<?php if($user->type === '4'): ?><option value="4" <?=($user->type == '4') ? 'selected' : null;?>>Course Member</option><?php endif; ?>
 								</select>
 							</td>
 						</tr>

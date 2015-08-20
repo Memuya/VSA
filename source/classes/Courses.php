@@ -243,7 +243,7 @@ class Courses {
 					try {
 						$q = DB::$db->prepare("
 							INSERT INTO enrolments (user_id, course_id, status)
-							VALUES (:user_id, :course_id, '1')
+							VALUES (:user_id, :course_id, '0')
 						");
 
 						$q->execute([
@@ -252,18 +252,60 @@ class Courses {
 						]);
 
 						//success message
-						$message = "Thank you for applying for this course. Please check your enrolment status in your account page.";
+						$message = "Thank you for applying for this course. You can check your enrolment status via your account page.";
 					} catch(PDOException $ex) {
 						Errors::add($ex->getMessage());
 					}
 				}
-			//if user is not logged in, get their details and email them		
+			//if user is not logged in, get their details and create a "Course" membership for them	
 			} else {
 				//validate form data here
-				
+				$register = new Register(
+					$_POST['username'],
+					$_POST['password'],
+					$_POST['r_password'],
+					'course',
+					$_POST['company'],
+					$_POST['title'],
+					$_POST['fname'],
+					$_POST['lname'],
+					$_POST['address'],
+					$_POST['suburb'],
+					$_POST['state'],
+					$_POST['postcode'],
+					$_POST['country'],
+					$_POST['phone'],
+					$_POST['email'],
+					null,
+					null
+				);
+
+				$register->user();
+
+				//enrol the user into the course with a pending status
+				if(!Errors::hasErrors()) {
+					$lastID = DB::$db->lastInsertId();
+
+					try {
+						$q = DB::$db->prepare("
+							INSERT INTO enrolments (user_id, course_id, status)
+							VALUES (:user_id, :course_id, '0')
+						");
+
+						$q->execute([
+							':user_id' => $lastID,
+							':course_id' => $course_id
+						]);
+
+						//success message
+						$message = "Thank you for applying for this course. Your Course Member account has been registered. Please activate your account with the link sent to your email..";
+					} catch(PDOException $ex) {
+						Errors::add($ex->getMessage());
+					}
+				}
 
 				//success message
-				$message = "Thank you for applying for this course. An email has been sent to your email address. Please check your email for details.";
+				//$message = "Thank you for applying for this course. An email has been sent to your email address. Please check your email for details.";
 			}
 		}
 

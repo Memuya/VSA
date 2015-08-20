@@ -89,9 +89,6 @@ class Register {
 				case "corporate":
 					$type_num = 3;
 					break;
-				case "course":
-					$type_num = 4;
-					break;
 				default:
 					Errors::add("The type of membership you have selected is not valid");
 					break;
@@ -120,13 +117,10 @@ class Register {
 				$hash_pass = password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 10]);
 				$activation_code = sha1(uniqid(true));
 
-				//set expire for course members
-				$course_member_expiry = ($type_num === 4) ? "UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 31 DAY))" : 0;
-
 				//prepare query
 				$insert = DB::$db->prepare("
-					INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, fax, website, company, blocked, type, activation_code, active, level, payment_made, date_created, payment_due_date, course_member_expiry) 
-					VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, :fax, :website, :company, '0', :type, :activation_code, '1', '2', '0', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 31 DAY)), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 1 YEAR)))
+					INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, fax, website, company, blocked, type, activation_code, active, level, payment_made, date_created, payment_due_date) 
+					VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, :fax, :website, :company, '0', :type, :activation_code, '1', '2', '0', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 31 DAY)))
 				") or die(SQL_ERROR);
 
 				//execute query

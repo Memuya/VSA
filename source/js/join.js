@@ -35,12 +35,6 @@ $(document).ready(function() {
 		}
 	});
 
-
-	//add an asterisk to all required input fields on the page
-	$("input[required]").each(function() {
-		$(this).parent().prev().children().append(' <span class="text-red">*</span>');
-	});
-
 	//hide the description area
 	$("#close-desc-btn").click(function() {
 		$("#type-description").slideUp();

@@ -35,7 +35,7 @@ $c = $q->rowCount();
 
 				<div class="sponsor-wrapper">
 					<div class="title">
-						<?=$r->company;?>
+						<?=(!empty($r->company)) ? $r->company : 'N/A';?>
 					</div>
 					<div class="info">
 						<p><b><?=$r->title." ".$r->fname." ".$r->lname;?></b></p>

@@ -70,38 +70,62 @@ class Sponsors {
 	public function deleteAd($id) {
 		$id = (int)$id;
 
-		$q = DB::$db->prepare("
-			SELECT id, img_ext
-			FROM ads
-			WHERE id = :id
-		");
-		$q->execute([':id' => $id]);
+		try {
+			$q = DB::$db->prepare("
+				SELECT ads.id, img_ext, title, fname, lname, email
+				FROM ads
+				INNER JOIN users
+				ON users.id = ads.user_id
+				WHERE ads.id = :id
+			");
+			$q->execute([':id' => $id]);
 
-		$c = $q->rowCount();
-		$r = $q->fetch(PDO::FETCH_OBJ);
+			$c = $q->rowCount();
+			$r = $q->fetch(PDO::FETCH_OBJ);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		if($c !== 0) {
 			//delete image
 			unlink('../img/sponsors/'.$r->id.".".$r->img_ext);
 
-			$q = DB::$db->prepare("
-				DELETE FROM ads
-				WHERE id = :id
-			");
-			$q->execute([':id' => $id]);
+			try {
+				$q = DB::$db->prepare("
+					DELETE FROM ads
+					WHERE id = :id
+				");
+				$q->execute([':id' => $id]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
+
+			//email user about the status of their advert
+			$email_message  = "Hello ".$r->title." ".$r->fname." ".$r->lname.", \r\n\r\n";
+			$email_message .= "We regret to inform you that the advertisement you have submitted to the VSA website has been declined. If you feel that this is an unfair decision, please do not hesitate to contact us with the link provided below:\r\n\r\n";
+
+			$email_message .= PATH."contact";
+
+			mail($r->email, "Update on your VSA advertisement", $email_message);
 		}
 	}
 
 	public function acceptAd($id) {
 		$id = (int)$id;
 
-		$q = DB::$db->prepare("
-			SELECT id
-			FROM ads
-			WHERE id = :id
-			AND status = '0'
-		");
-		$q->execute([':id' => $id]);
+		try {
+			$q = DB::$db->prepare("
+				SELECT ads.id, img_ext, title, fname, lname, email
+				FROM ads
+				INNER JOIN users
+				ON users.id = ads.user_id
+				WHERE ads.id = :id
+				AND status = '0'
+			");
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 
 		$c = $q->rowCount();
 		$r = $q->fetch(PDO::FETCH_OBJ);
@@ -113,6 +137,12 @@ class Sponsors {
 				WHERE id = :id
 			");
 			$q->execute([':id' => $id]);
+
+			//email user about the status of their advert
+			$email_message  = "Hello ".$r->title." ".$r->fname." ".$r->lname.", \r\n\r\n";
+			$email_message .= "The advertisement you have submitted to the VSA website has been accepted to be displayed!";
+
+			mail($r->email, "Update on your VSA advertisement", $email_message);
 		}
 	}
 
@@ -121,10 +151,14 @@ class Sponsors {
 		$user_id = (int)$user_id;
 
 		//check to see if an advertisement has been submitted yet
-		$q = DB::$db->prepare("SELECT user_id FROM ads WHERE user_id = :user_id");
-		$q->execute([':user_id' => $user_id]);
-		$c = $q->rowCount();
-
+		try {
+			$q = DB::$db->prepare("SELECT user_id FROM ads WHERE user_id = :user_id");
+			$q->execute([':user_id' => $user_id]);
+			$c = $q->rowCount();
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
+			
 		if($c != 0) {
 			Errors::add("You have already submitted an advertisement to VSA. If it is not being displayed on the front page, your advertisement is yet to be approved. Please <a href=\"".PATH."contact\">contact us</a> for any questions you may have.");
 		} else {
@@ -174,7 +208,7 @@ class Sponsors {
 				//upload image here
 				move_uploaded_file($tmp_name, "../img/sponsors/".$lastId.".".$ext);
 
-				$email_message  = 'A new advertisement has been submitted to the VSA website.';
+				$email_message  = 'A new advertisement has been submitted to the VSA website. Please login to the control panel to accept or decline it.';
 
 				//send an email to an administrator (all of them?) to notify them that they have a ad pending
 				mail('admin@vacuumsociety.org.au', "A new advertisement has been submitted", $email_message);
