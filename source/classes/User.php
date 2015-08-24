@@ -105,19 +105,34 @@ class User extends Pagination {
 	*/
 	public function search($string) {
 		if(!empty($string)) {
-			$q = DB::$db->prepare("
-				SELECT *, users.id
-				FROM users
-				INNER JOIN membership_types
-				ON membership_types.id = users.type
-				WHERE MATCH(users.username) AGAINST(:string IN BOOLEAN MODE)
-				OR users.username LIKE :second_string
-			");
+			//check if string is a username
+			if(!is_numeric($string)) {
+				$q = DB::$db->prepare("
+					SELECT *, users.id
+					FROM users
+					INNER JOIN membership_types
+					ON membership_types.id = users.type
+					WHERE MATCH(users.username) AGAINST(:string IN BOOLEAN MODE)
+					OR users.username LIKE :second_string
+				");
 
-			$q->execute([
-				':string' => $string.'*',
-				':second_string' => '%'.$string.'%'
-			]);
+				$q->execute([
+					':string' => $string.'*',
+					':second_string' => '%'.$string.'%'
+				]);
+			} else {
+				$id = (int)$string;
+
+				$q = DB::$db->prepare("
+					SELECT *, users.id
+					FROM users
+					INNER JOIN membership_types
+					ON membership_types.id = users.type
+					WHERE users.id = :id
+				");
+
+				$q->execute([':id' => $id]);
+			}
 
 			$this->count = $q->rowCount();
 

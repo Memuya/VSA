@@ -36,30 +36,30 @@ $courses = $_courses->getAll();
 					<div class="clear"></div>
 				<?php endif; ?>
 
-				<table class="style">
-					<tr>
-						<th>Code</th>
-						<th>Course</th>
-						<th>Duration</th>
-						<th>When</th>
-						<th>Time</th>
-						<th>Where</th>
-						<th>Cost</th>
-						<th>Enrol</th>
-					</tr>
-
 					<?php foreach($courses as $course): ?>
 
-						<tr>
-							<td><?=$course->code;?></td>
-							<td><?=$course->name;?></td>
-							<td><?=$course->duration;?></td>
-							<td><?=$course->date;?></td>
-							<td><?=$course->time;?></td>
-							<td><?=nl2br($course->location);?></td>
-							<td title="Members of VSA are entitled to a 20% discount for courses">$<?=(Login::loggedIn()) ? $course->cost * ((100-20) / 100) : $course->cost;?>*</td>
-							<td><?=($course->expired == 0) ? '<a href="apply-course?id='.$course->id.'" class="btn">Apply</a>' : '<span class="text-red">Expired</span>';?></td>
-						</tr>
+						<h2><?=$course->name;?></h2>
+						<table class="style">
+							<tr>
+								<th>Code</th>
+								<th>Duration</th>
+								<th>When</th>
+								<th>Time</th>
+								<th>Where</th>
+								<th>Cost</th>
+							</tr>
+							<tr>
+								<td><?=$course->code;?></td>
+								<td><?=$course->duration;?></td>
+								<td><?=$course->date;?></td>
+								<td><?=$course->time;?></td>
+								<td><?=nl2br($course->location);?></td>
+								<td title="Members of VSA are entitled to a discount">$<?=(Login::loggedIn()) ? $course->cost * ((100-20) / 100) : $course->cost;?>*</td>
+							</tr>
+						</table>
+
+						<?=($course->expired == 0) ? '<a href="apply-course?id='.$course->id.'" class="btn rfloat">Apply</a>' : '<a href="#" onclick="return false" class="btn rfloat" style="cursor: not-allowed; background: #AAA;">Expired</a>';?>
+						<div class="clear"></div>
 
 					<?php endforeach; ?>
 

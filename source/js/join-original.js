@@ -97,12 +97,6 @@ $(document).ready(function() {
 		$(".load-desc").hide().load("includes/membership-desc.php?type=3").fadeIn();
 	});
 
-
-	//add an asterisk to all required input fields on the page
-	$("input[required]").each(function() {
-		$(this).parent().prev().children().append(' <span class="text-red">*</span>');
-	});
-
 	//hide the description area
 	$("#close-desc-btn").click(function() {
 		$("#type-desscription").slideUp();

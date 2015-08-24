@@ -29,7 +29,7 @@ include $t->load("template/head.php");
 <script>
 	$(document).ready(function() {
 		$("#apply").click(function() {
-			var c = confirm("Confirm Application for this course.");
+			var c = confirm("Confirm Application for this course?");
 
 			if(c) {
 				$("#feedback").html('<div class="center"><img src="img/ajax-loader.gif"></div>');
@@ -72,14 +72,21 @@ include $t->load("template/header.php");
 
 				<?php if($course->expired === '1'): ?>
 
-					<div class="notice-box yellow-notice">Sorry, but this course has expired. We apologize for any inconvenience this may have caused.</div>
+					<div class="notice-box yellow-notice text-left">Sorry, but this course has expired. We apologize for any inconvenience this may have caused.</div>
 					<div class="center"><a href="<?=PATH;?>courses" class="btn">Find more short courses</a></div>
 
 				<?php else: ?>
 
 					<div id="feedback"></div>
 
-					<p>Thank you for showing an interest in the <strong>"<?=$course->name;?>"</strong> course. Please confirm below that you would like to apply for this course. Applying for a course registers you as a special "Course Member" that has access to the VSA site for 1 year!</p>
+					<h2>Thank you for showing an interest in the <span class="text-red">"<?=$course->name;?>"</span> course.</h2>
+					<p>
+						Please confirm below that you would like to apply for this course. 
+
+						<?php if(!Login::loggedIn()): ?> 
+							Applying for a course registers you as a special "Course Member" that has access to the VSA site for 1 year. If you already have an account with VSA, please login first before applying for a course.
+						<?php endif; ?>
+					</p>
 
 					<table class="style">
 						<tr>

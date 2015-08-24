@@ -38,7 +38,6 @@ $(document).ready(function() {
 		$(".main-nav").slideToggle();
 	});
 
-	//
 	$(".resized-sidebar-menu").click(function() {
 		$(".sidebar").slideToggle();
 	});

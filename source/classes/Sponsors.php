@@ -102,7 +102,7 @@ class Sponsors {
 
 			//email user about the status of their advert
 			$email_message  = "Hello ".$r->title." ".$r->fname." ".$r->lname.", \r\n\r\n";
-			$email_message .= "We regret to inform you that the advertisement you have submitted to the VSA website has been declined. If you feel that this is an unfair decision, please do not hesitate to contact us with the link provided below:\r\n\r\n";
+			$email_message .= "We regret to inform you that the advertisement you have submitted to the VSA website has been declined or deleted. If you feel that this is an unfair decision, please do not hesitate to contact us with the link provided below:\r\n\r\n";
 
 			$email_message .= PATH."contact";
 

@@ -298,7 +298,7 @@ class Courses {
 						]);
 
 						//success message
-						$message = "Thank you for applying for this course. Your Course Member account has been registered. Please activate your account with the link sent to your email..";
+						$message = "Thank you for applying for this course. Your Course Member account has been registered. Please activate your account with the link sent to your email.";
 					} catch(PDOException $ex) {
 						Errors::add($ex->getMessage());
 					}
