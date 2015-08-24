@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 20, 2015 at 09:46 PM
+-- Generation Time: Aug 24, 2015 at 09:27 PM
 -- Server version: 5.6.16
 -- PHP Version: 5.5.11
 
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `courses` (
   `cost` varchar(10) NOT NULL,
   `expired` enum('0','1') NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `courses`
@@ -68,7 +68,8 @@ CREATE TABLE IF NOT EXISTS `courses` (
 
 INSERT INTO `courses` (`id`, `code`, `name`, `duration`, `date`, `time`, `location`, `cost`, `expired`) VALUES
 (1, 'VTS', 'Vacuum Technology', '2 days (Tues - Wed)', '2014-07-01', '8:50am - 5:00pm', 'University of NSW - Sydney, NSW', '480', '1'),
-(2, 'VVA', 'Vacuum in Space', '1 week', '2015-05-06', '9:00am - 1:00pm', 'Victoria University, Footscray', '1500', '0');
+(2, 'VVA', 'Vacuum in Space', '1 week', '2015-05-06', '9:00am - 1:00pm', 'Victoria University, Footscray', '1500', '0'),
+(3, 'ATC', 'Advance Vacuum Science', '1 Month', '2016-08-21', '9am - 1pm', 'Deakin University', '2750', '0');
 
 -- --------------------------------------------------------
 
@@ -83,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `enrolments` (
   `status` enum('0','1') NOT NULL,
   `payment_required` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=26 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=28 ;
 
 --
 -- Dumping data for table `enrolments`
@@ -99,7 +100,7 @@ INSERT INTO `enrolments` (`id`, `user_id`, `course_id`, `status`, `payment_requi
 (14, 24, 2, '1', ''),
 (22, 29, 2, '0', ''),
 (23, 30, 2, '0', ''),
-(24, 31, 2, '0', '');
+(26, 29, 3, '0', '');
 
 -- --------------------------------------------------------
 
@@ -302,7 +303,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `course_member_expiry` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   FULLTEXT KEY `username` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=33 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=34 ;
 
 --
 -- Dumping data for table `users`
@@ -310,21 +311,20 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `title`, `fname`, `lname`, `address`, `suburb`, `state`, `postcode`, `country`, `telephone`, `fax`, `website`, `company`, `blocked`, `type`, `active`, `level`, `password_reset`, `activation_code`, `reset_code`, `payment_made`, `date_created`, `payment_due_date`, `course_member_expiry`) VALUES
 (1, 'Admin', '$2y$10$FiMkVxrtXeWNVUXECPN9S.LkIzYp3pjZv3GUAAmQvxkDTm8fG7spq', 'jakub.szajman@vu.edu.au', 'Mr', 'Jakub', 'Szajman', '65 Tree Road', 'Footscray', 'Victoria', 3037, 'Australia', '(03) 9919 4286', '(03) 9919 4286', 'http://www.another.com', 'Vic Uni', '0', '3', '1', '1', '0', '', '', '1', '1435752000', '1438587031', ''),
-(2, 'Kiark', '$2y$10$AeChCOu5T61XXo9SsLn0ieZKeade5r4OhP09vClaJ01Vilia8BVV2', 'lil_memi@hotmail.com', 'Mr', 'Mehmet', 'Uyanik', '19 Colston drive', 'Hillside', 'Victoria', 3037, 'Australia', '+61404366893', 'N/A', 'http://www.', 'N/A', '0', '2', '0', '2', '0', '', '', '1', '0', '1438587031', ''),
-(5, 'Mehmet', '$2y$10$9BM47dMJyBy77ujqXYGbT.UWsjGUlrp2EiLjRBxHy/5f7qvbQSzS6', 'asd@asd.asd', 'Mr', 'Mehmet', 'Uyanik', '19 Colston drive', 'Melbourne', 'VIC', 3037, 'Australia', '+61404366893', '+61404366893', 'http://www.memuya.com.au', 'Memuya Corp', '0', '3', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
+(2, 'Kiark', '$2y$10$AeChCOu5T61XXo9SsLn0ieZKeade5r4OhP09vClaJ01Vilia8BVV2', 'kiark@hotmail.com', 'Mr', 'Kiark', 'Liark', '43 address drive', 'Footscray', 'Victoria', 3036, 'Australia', '0412587965', 'N/A', 'http://www.', 'N/A', '0', '2', '0', '2', '0', '', '', '1', '0', '1438587031', ''),
+(5, 'Mehmet', '$2y$10$9BM47dMJyBy77ujqXYGbT.UWsjGUlrp2EiLjRBxHy/5f7qvbQSzS6', 'asd@asd.asd', 'Mr', 'Mehmet', 'Uyanik', '19 Bolstin crt', 'Footscray', 'VIC', 3037, 'Australia', '+61404366893', '+61404366893', 'http://www.memuya.com.au', 'Memuya Corp', '0', '3', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
 (6, 'Bob', '$2y$10$ctxhBbVMSmfVsOKBftZ7.O9g3gHev2QJQIuO4CNEaq3L.8pyXD9yG', 'bobsmith@gmail.com', 'E/Prof', 'Bob', 'Smith', '65 Tree Road', 'Friland', 'Victoria', 3456, 'Australia', '93654123', 'N/A', 'http://www.', 'N/A', '0', '2', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
-(7, 'Mem', '$2y$10$AEiKMbUUiti9dmC4BRFvAuPRYLCo43saSHwiDn/ySHPZ/.o.MU5R2', 'mehmet.uyanik@live.com.au', 'Mr', 'Mehmet', 'Uyanik', '19 Colston drive', 'Melbourne', 'VIC', 3037, 'Australia', '+61404366893', 'N/A', 'http://www.', 'N/A', '0', '2', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
+(7, 'Mem', '$2y$10$AEiKMbUUiti9dmC4BRFvAuPRYLCo43saSHwiDn/ySHPZ/.o.MU5R2', 'mehmet.uyanik@live.com.au', 'Mr', 'Mehmet', 'Uyanik', '19 address drive', 'Melbourne', 'VIC', 3037, 'Australia', '+61404366893', 'N/A', 'http://www.', 'N/A', '0', '2', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
 (8, 'Alex', '$2y$10$SZyKdg00fudzRi4CCc1m5O1s.3BH/bOAmGjKXllwDkrlarqVS5r5.', 'alex@hotmail.com', 'Ms', 'Alex', 'Maxitanis', '64 Bellevue Bvd', 'Hillside', 'Victoria', 3037, 'Australia', '0412547896', NULL, NULL, NULL, '0', '1', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
 (9, 'Rocky', '$2y$10$QTUNnW8PtphnaTVJFk6xI.IVHQAgwjZYK0yzIraOshCYktZGID3x2', 'rocky@hotmail.com', 'Mr', 'Rocky', 'Calfa', '11 Hillside crt', 'Hillside', 'Victoria', 3037, 'Australia', '0456874398', NULL, NULL, NULL, '0', '2', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
 (10, 'Dan', '$2y$10$6ghTrmFO035G7DdCTgAr9emsGSvdQaYKOMqOpi5IEMxpV2kvosCtq', 'dj_rokstr@gmail.com', 'Mr', 'daniel', 'chalmers', '17 Blah', 'keilor', 'VIC', 3037, 'America', '555-1024', '', '', NULL, '1', '1', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
 (12, 'Jesse', '$2y$10$I5aKMLGABf2stYRpf6/4fuysa.mJ8afL4oasjaOLto0sivBRbFx3m', 'jesse@hotmail.com', '', 'Jesse', 'Borg', '1 Something drive', 'Hillside', 'VIC', 3037, 'Australia', '0458754125', NULL, NULL, NULL, '0', '2', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
 (13, 'Amber', '$2y$10$/acaVwB9.MaVLlZq1i7Ic.X7DCAiHbt1Plm0vmXY0HtyI3WCdA8uC', 'amber@hotmail.com', 'Ms', 'Amber', 'Doignie', '68 Somewhere drive', 'Melton', 'VIC', 3040, 'Australia', '0412654128', '0432456789', 'http://www.amber.com', 'Ambtek Industries', '0', '3', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
 (16, 'kevin', '$2y$10$Cml3GpOB2ZsaGLm9EAnGqOgueVO4U9iJs49RUogT5YvBXFG/0oMm2', 'armstrong@avtservices.com.au', 'Mr', 'Kevin', 'Armstrong', '12 Something Drive', 'Footscray', 'Victoria', 3056, 'Australia', '(02) 9674 6711', '(02) 9674 7358', 'http://www.avtservices.com.au', 'AVT Services P/L', '0', '3', '1', '2', '0', '', '', '1', '0', '1438587031', ''),
-(21, 'payment', '$2y$10$qNIi1TK.B/t7MqJvmlrFKu6eGnnKYmeCEWPBDS9jGMzqBUBS0OeaG', 'payment@hotmail.com', 'Sir', 'Mehmet', 'Uyanik', '19 Colston drive', 'Melbourne', 'VIC', 3037, 'Australia', '+61404366893', '', '', '', '0', '2', '1', '2', '0', '', '', '0', '1438501380', '1438598490', ''),
-(23, 'newuser', '$2y$10$RfkqdX5ETrzm0VT64UHMg.RhqHylCp3v9APRPI.Qv.aRaoH0GXM/y', 'lil_me@hotmail.com', 'Dr', 'Mehmet', 'Uyanik', '19 Colston drive', 'Melbourne', 'VIC', 3037, 'Australia', '+61404366893', 'N/A', 'http://www.', 'N/A', '0', '2', '1', '2', '0', 'e0a993ed8d2f5a4d94844bdbf93d3ca4d384357f', '', '0', '1439853472', '1442531872', ''),
-(29, 'course', '$2y$10$fUMR67H9SHm0./2XNnIZJOTSzRBWzTWMkt.HlVHV3GI7IvtPt.XIC', 'course@otmail.com', 'Ms', 'Mehmet', 'Uyanik', '19 Colston drive', 'Hillside', 'Victoria', 3037, 'Australia', '+61404366893', 'N/A', 'http://www.', 'N/A', '0', '4', '1', '2', '0', 'f92ef0b52dc2358ddc17cf6e55b59f77fda6bbbe', '', '0', '1440053111', '1442731511', '1471695132'),
-(30, 'expireduser', '$2y$10$zjJ7tupxWUVFQOA4L8Q.dONoaDyHKEHY.dGHiYI.j7QLhF.eRHYa6', 'expireduser@hotmail.com', 'Dr', 'Expired', 'User', '17 Expired drive', 'Expirville', 'NSW', 7654, 'Australia', '93654789', 'N/A', 'http://www.', 'N/A', '0', '4', '1', '2', '0', 'af9236f40863b45c8bafea52c0b7e0f4c1214afe', '', '0', '1440055039', '1442733439', '1439986332'),
-(31, 'delete', '$2y$10$fO18zPIkT4KkMDYzyEtJ/.zaVwE/lUwsfqxT/qLVn.qWpTANq4nJe', '_memi@hotmail.com', '', 'Mehmet', 'Uyanik', '19 Colston drive', 'Hillside', 'Victoria', 3037, 'Australia', '+61404366893', '', '', '0457283127', '0', '4', '1', '2', '0', 'b4145677c44322ebbc21774c24835c08c03e436c', '', '0', '1440064016', '1442742416', '1471686416');
+(21, 'payment', '$2y$10$qNIi1TK.B/t7MqJvmlrFKu6eGnnKYmeCEWPBDS9jGMzqBUBS0OeaG', 'payment@hotmail.com', 'Sir', 'Payment', 'Made', '19 Colston drive', 'Melbourne', 'VIC', 3037, 'Australia', '+61404366893', 'N/A', 'http://www.', 'N/A', '0', '2', '1', '2', '0', '', '', '0', '1438501380', '1438598490', ''),
+(23, 'newuser', '$2y$10$uBEw1GW93xeqg3cZTgWkb.j1HdFZE/KlK1WjfIiamKSjOtoy20G92', 'newuser@hotmail.com', 'Dr', 'New', 'User', '90 address', 'Melbourne', 'VIC', 3045, 'Australia', '0458745698', 'N/A', 'http://www.', 'N/A', '0', '2', '1', '2', '0', 'e0a993ed8d2f5a4d94844bdbf93d3ca4d384357f', '', '0', '1439853472', '1442531872', ''),
+(29, 'course', '$2y$10$fUMR67H9SHm0./2XNnIZJOTSzRBWzTWMkt.HlVHV3GI7IvtPt.XIC', 'course@otmail.com', 'Ms', 'Course', 'Member', '19 Course Street', 'Hillside', 'Victoria', 3037, 'Australia', '+61404366893', 'N/A', 'http://www.', 'N/A', '0', '4', '1', '2', '0', 'f92ef0b52dc2358ddc17cf6e55b59f77fda6bbbe', '', '0', '1440053111', '1442731511', '1471695132'),
+(30, 'expireduser', '$2y$10$zjJ7tupxWUVFQOA4L8Q.dONoaDyHKEHY.dGHiYI.j7QLhF.eRHYa6', 'expireduser@hotmail.com', 'Dr', 'Expired', 'User', '17 Expired drive', 'Expirville', 'NSW', 7654, 'Australia', '93654789', 'N/A', 'http://www.', 'N/A', '0', '4', '1', '2', '0', 'af9236f40863b45c8bafea52c0b7e0f4c1214afe', '', '0', '1440055039', '1442733439', '1439986332');
 
 -- --------------------------------------------------------
 
@@ -343,7 +343,7 @@ CREATE TABLE IF NOT EXISTS `welcome_message` (
 --
 
 INSERT INTO `welcome_message` (`id`, `body`) VALUES
-(1, '<h1>Welcome</h1>\n\n<p>The&nbsp;<strong>Vacuum Society of Australia</strong> (VSA) is a not-for-profit organization dedicated to the advancement of vacuum science relating to vacuum technology, materials, surfaces, interfaces, thin films and plasmas and to providing a variety of educational opportunities.&nbsp;Please check our <a href="http://localhost/vsa/news">news</a>&nbsp;page&nbsp;for latest information.</p>\n\n<p>The Society welcomes participation from all its members, and encourages student involvement. It is the Australian body representing IUVSTA (International Union for Vacuum Science, Technique and Applications).</p>\n\n<p>The VSA publishes the Newsletter &quot;OZVAC&quot; which includes scientific and technical articles, product information from manufacturers as well as a &#39;For Sale/Wanted section&#39; and other possibilities for those in the field of Vacuum Science to Network and communicate.Membership is open to all interested parties and discounts for Student membership available.</p>\n\n<p>VSA runs a number of Vacuum Technology <a href="http://localhost/vsa/courses">short courses</a>. The courses are suitable for researchers, technicians and engineers. Vacuum Technology courses cover the fundamental theory, practical knowledge and computer laboratories simulating real vacuum systems. Comprehensive notes are provided. Click on the image to test your practical knowledge of a diffusion pump system.</p>\n');
+(1, '<h1>Welcome</h1>\n\n<p>The&nbsp;<strong>Vacuum Society of Australia</strong> (VSA) is a not-for-profit organization dedicated to the advancement of vacuum science relating to vacuum technology, materials, surfaces, interfaces, thin films and plasmas and to providing a variety of educational opportunities.&nbsp;Please check our <a href="http://localhost/vsa-demo/news">news</a>&nbsp;page&nbsp;for latest information.</p>\n\n<p>The Society welcomes participation from all its members, and encourages student involvement. It is the Australian body representing IUVSTA (International Union for Vacuum Science, Technique and Applications).</p>\n\n<p>The VSA publishes the Newsletter &quot;OZVAC&quot; which includes scientific and technical articles, product information from manufacturers as well as a &#39;For Sale/Wanted section&#39; and other possibilities for those in the field of Vacuum Science to Network and communicate.Membership is open to all interested parties and discounts for Student membership available.</p>\n\n<p>VSA runs a number of Vacuum Technology <a href="http://localhost/vsa-demo/courses">short courses</a>. The courses are suitable for researchers, technicians and engineers. Vacuum Technology courses cover the fundamental theory, practical knowledge and computer laboratories simulating real vacuum systems. Comprehensive notes are provided. Click on the image to test your practical knowledge of a diffusion pump system.</p>\n');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
