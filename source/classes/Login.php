@@ -21,7 +21,7 @@ class Login {
 			Errors::add("All fields are required");
 		else {
 			$q = DB::$db->prepare("
-				SELECT id, blocked, type, active, password, level, password_reset, date_created, payment_due_date, payment_made, course_member_expiry
+				SELECT id, blocked, type, active, password, level, password_reset, date_created, payment_due_date, payment_made, membership_expiry_date
 				FROM users
 				WHERE username = :username
 			") or die(DB::$db->error);
@@ -33,20 +33,11 @@ class Login {
 
 			if($c !== 0) {
 				//convert the due date timestamp into a date and pass it through the DateTime object
-				$date = new DateTime(date('Y-m-d', ($r->type === '4') ? $r->course_member_expiry : $r->payment_due_date));
+				$date = new DateTime(date('Y-m-d', ($r->type === '4') ? $r->membership_expiry_date : $r->payment_due_date));
 				//get current date information
 				$today = new DateTime();
 				//get the difference between the 2 dates
 				$date_diff = $today->diff($date);
-
-				/*
-				//OLD DATE STUFF W/O COURSE MEMBERS STUFF
-				$date = new DateTime(date('Y-m-d', $r->payment_due_date));
-				//get current date information
-				$today = new DateTime();
-				//get the difference between the 2 dates
-				$date_diff = $today->diff($date);
-				*/
 			}
 
 			if($c == 0)
@@ -58,11 +49,17 @@ class Login {
 					Errors::add("Your account has not been activated as of yet. Please <a href=\"".PATH."contact\">contact us</a> if you have any questions.");
 				else if($r->blocked == 1)
 					Errors::add("Your account has been blocked. Please <a href=\"".PATH."contact\">contact us</a> to sort this out.");
-				else if(($r->payment_made === '0') && $date_diff->invert == 1)
-					if($r->type === '4')
-						Errors::add("Your Course Membership has expired. Please feel free to <a href=\"".PATH."contact\">contact us</a> for any help.");
-					else
-						Errors::add("Your payment has not been received as of yet. It has been 31 or more days since your account has been created. Once we have received your membership payment, you will be able to log into your account.");
+
+				//take care of user payments
+				else if($c !== 0)
+					if(($r->payment_made === '0') && $date_diff->invert == 1)
+						if($r->type === '4')
+							Errors::add("Your Course Membership has expired. Please feel free to <a href=\"".PATH."contact\">contact us</a> for any help.");
+						else
+							Errors::add("Your payment has not been received as of yet. It has been 30 or more days since your account has been created. Once we have received your membership payment, you will be able to log into your account.");
+					//check to see if it's been 1 year since payment has been recevied
+					else if($r->payment_made === '1' && (date('Y-m-d', $r->membership_expiry_date) < date('Y-m-d')))
+						Errors::add("Your membership expired on the ".date('jS M Y', $r->membership_expiry_date).". Please <a href=\"".PATH."contact\">contact us</a> for any questions you may have.");
 				else {
 					//set login session
 					$_SESSION['logged'] = $r->id;

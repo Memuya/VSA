@@ -317,6 +317,33 @@ class User extends Pagination {
 			else if($email_c != 0)
 				Errors::add("That email address is already in-use");
 
+			if(strlen($fname) > 30)
+				Errors::add("First Name must be 30 characters or less");
+
+			if(strlen($lname) > 40)
+				Errors::add("Last Name must be 40 characters or less");
+
+			if(strlen($address) > 80)
+				Errors::add("Address must be 80 characters or less");
+
+			if(strlen($suburb) > 50)
+				Errors::add("Suburb must be 50 characters or less");
+
+			if(strlen($state) > 50)
+				Errors::add("State must be 50 characters or less");
+
+			if(strlen($postcode) > 10)
+				Errors::add("Postcode must be 10 characters or less");
+
+			if(strlen($country) > 50)
+				Errors::add("Country must be 50 characters or less");
+
+			if(strlen($telephone) > 20)
+				Errors::add("Telephone must be 20 characters or less");
+
+			if(strlen($fax) > 20)
+				Errors::add("First Name must be 30 characters or less");
+
 			//get type of membership of the user to validate below
 			$q = DB::$db->prepare("SELECT type FROM users WHERE id = :id");
 			$q->execute([':id' => $id]);
@@ -624,9 +651,18 @@ class User extends Pagination {
 				$q->execute([':id' => $id]);
 
 				if($r->type === '3') {
-					$q = DB::$db->preapre("DELETE FROM ads WHERE user_id = :id");
+					//unlink image from directory if user is a corporate member
+					$get_ads = DB::$db->prepare("SELECT * FROM ads WHERE user_id = :id");
+					$get_ads->execute([':id' => $id]);
+					$count_ads = $get_ads->rowCount();
+					if($count_ads !== 0) {
+						while($r = $get_ads->fetch(PDO::FETCH_OBJ))
+							unlink("../img/sponsors/".$r->id.".".$r->img_ext);
+					}
+
+					//delete ads from database
+					$q = DB::$db->prepare("DELETE FROM ads WHERE user_id = :id");
 					$q->execute([':id' => $id]);
-					//unlink image
 				}
 
 				//delete user

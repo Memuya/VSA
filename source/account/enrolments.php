@@ -17,7 +17,7 @@ include $t->load("template/head.php");
 include $t->load("template/header.php");
 
 $_courses = new Courses;
-$enrolments = $_courses->getEnrolments($_SESSION['logged']);
+$enrolments = $_courses->getUserEnrolments($_SESSION['logged']);
 ?>	
 	<div id="page-heading">
 		<h1>My Enrolments</h1>
@@ -32,7 +32,7 @@ $enrolments = $_courses->getEnrolments($_SESSION['logged']);
 					<p>Below is a list of courses that you have applied for and their current status.</p>
 					<ul>
 						<li><span class="text-green"><b>Enrolled</b></span> - You are currently enrolled in this course</li>
-						<li><span class="text-orange"><b>Pending</b></span> - Awaiting approval to be enrolled into this course</li>
+						<li><span class="text-orange"><b>Pending</b></span> - Awaiting approval to be enrolled into this course. Will be updated to <span class="text-green"><b>enrolled</b></span> after payment has been recieved</li>
 						<li><span class="text-red"><b>Expired</b></span> - The course has expired</li>
 					</ul>
 
@@ -41,6 +41,7 @@ $enrolments = $_courses->getEnrolments($_SESSION['logged']);
 							<th>Course Code</th>
 							<th>Course Name</th>
 							<th>Status</th>
+							<th>Payment Required</th>
 						</tr>
 
 						<?php foreach($enrolments as $enrolment): ?>
@@ -57,6 +58,7 @@ $enrolments = $_courses->getEnrolments($_SESSION['logged']);
 										<span class="text-orange"><b>Pending</b></span>
 									<?php endif; ?>
 								</td>
+								<td>$<?=($enrolment->status === '0') ? $enrolment->payment_required : 0;?></td>
 							</tr>
 
 						<?php endforeach; ?>

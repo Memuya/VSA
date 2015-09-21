@@ -250,7 +250,7 @@ include $t->load("template/header.php");
 		<div class="outer-wrapper white">
 			<div class="inner-wrapper">
 				<div class="notice-box yellow-notice">You are already a member of VSA!</div>
-				<div class="center"><a href="<?=PATH;?>account/details" class="btn">Go to Account Page</a></div>
+				<div class="center"><a href="<?=PATH;?>account/payment" class="btn">Go to Account Page</a></div>
 			</div>
 		</div>
 

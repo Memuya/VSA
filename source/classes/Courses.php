@@ -2,12 +2,17 @@
 class Courses {
 	private $count;
 	private $data;
+	private static $discount = 10;
 
 	/**
 	* Initializes the data array
 	*/
 	public function __contruct() {
 		$this->data = [];
+	}
+
+	public static function getDiscount() {
+		return self::$discount;
 	}
 
 	/**
@@ -139,6 +144,14 @@ class Courses {
 			") or die($q->errorInfo());
 
 			$q->execute([':id' => $id]);
+
+			//delete all enrolments for that course
+			$q = DB::$db->prepare("
+				DELETE FROM enrolments
+				WHERE course_id = :id
+			") or die($q->errorInfo());
+
+			$q->execute([':id' => $id]);
 		}
 	}
 
@@ -215,6 +228,14 @@ class Courses {
 		if($course_c === 0)
 			Errors::add("You cannot apply for this course");
 		else {
+
+			//get price of course and apply discount if needed
+			$q = DB::$db->prepare("SELECT cost FROM courses WHERE id = :course_id");
+			$q->execute([':course_id' => $course_id]);
+			$r = $q->fetch(PDO::FETCH_OBJ);
+			
+			$payment_required = (!empty($user_id)) ? $r->cost * ((100-self::$discount) / 100) : $r->cost;
+
 			//check if user is logged in
 			if(!empty($user_id)) {
 				try {
@@ -242,13 +263,14 @@ class Courses {
 					//enrol the user into the course with a pending status
 					try {
 						$q = DB::$db->prepare("
-							INSERT INTO enrolments (user_id, course_id, status)
-							VALUES (:user_id, :course_id, '0')
+							INSERT INTO enrolments (user_id, course_id, status, payment_required)
+							VALUES (:user_id, :course_id, '0', :payment_required)
 						");
 
 						$q->execute([
 							':user_id' => $user_id,
-							':course_id' => $course_id
+							':course_id' => $course_id,
+							':payment_required' => $payment_required
 						]);
 
 						//success message
@@ -288,13 +310,14 @@ class Courses {
 
 					try {
 						$q = DB::$db->prepare("
-							INSERT INTO enrolments (user_id, course_id, status)
-							VALUES (:user_id, :course_id, '0')
+							INSERT INTO enrolments (user_id, course_id, status, payment_required)
+							VALUES (:user_id, :course_id, '0', :payment_required)
 						");
 
 						$q->execute([
 							':user_id' => $lastID,
-							':course_id' => $course_id
+							':course_id' => $course_id,
+							':payment_required' => $payment_required
 						]);
 
 						//success message
@@ -312,7 +335,12 @@ class Courses {
 		return Errors::displayErrors($message);
 	}
 
-	public function getEnrolments($user_id) {
+	/**
+	* Get a list of a users applied courses
+	*
+	* @param int $user_id
+	*/
+	public function getUserEnrolments($user_id) {
 		$user_id = (int)$user_id;
 
 		$q = DB::$db->prepare("
@@ -332,6 +360,96 @@ class Courses {
 				$this->data[] = $r;
 
 		return $this->data;
+	}
+
+	/**
+	* Counbt the number of students in a course (jncluding pending enrolments)
+	* status = 0 (Pending enrolments)
+	* status = 1` (Active enrolments)
+	*
+	* @param int $course_id
+	* @param string $status
+	*/
+	public function getEnrolmentCount($course_id, $status) {
+		$course_id = (int)$course_id;
+
+		try {
+			$q = DB::$db->prepare("
+				SELECT COUNT(*) AS count
+				FROM enrolments
+				INNER JOIN courses
+				ON enrolments.course_id = courses.id
+				WHERE enrolments.course_id = :course_id
+				AND enrolments.status = :status
+			");
+
+			$q->execute([
+				':course_id' => $course_id,
+				':status' => $status
+			]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
+
+		$this->count = $q->rowCount();
+		$r = $q->fetch(PDO::FETCH_OBJ);
+
+		if($this->count != 0)
+			$this->data = $r->count;
+
+		return $this->data;
+	}
+
+	/**
+	* Update the status of an course enrolment
+	*
+	* @param int $enrolment_id
+	* @param string $status
+	*/
+	public function changeEnrolmentStatus($enrolment_id, $status) {
+		$enrolment_id = (int)$enrolment_id;
+
+		//see if enrolment exist
+		try {
+			$q = DB::$db->prepare("
+				SELECT id
+				FROM enrolments
+				WHERE id = :id
+			");
+			$q->execute([':id' => $enrolment_id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
+
+		$c = $q->rowCount();
+
+		if($c !== 0) {
+			try {
+				$q = DB::$db->prepare("
+					UPDATE enrolments
+					SET status = :status
+					WHERE id = :id
+				");
+
+				$q->execute([
+					':status' => $status,
+					':id' => $enrolment_id
+				]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
+		}
+	}
+
+	public function deleteEnrolment($id) {
+		$id = (int)$id;
+
+		$q = DB::$db->prepare("
+			DELETE FROM enrolments
+			WHERE id = :id
+		");
+
+		$q->execute([':id' => $id]);
 	}
 
 	/**

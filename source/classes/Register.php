@@ -125,7 +125,7 @@ class Register {
 
 				//prepare query
 				$insert = DB::$db->prepare("
-					INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, fax, website, company, blocked, type, activation_code, active, level, payment_made, date_created, payment_due_date, course_member_expiry) 
+					INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, fax, website, company, blocked, type, activation_code, active, level, payment_made, date_created, payment_due_date, membership_expiry_date) 
 					VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, :fax, :website, :company, '0', :type, :activation_code, '1', '2', '0', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 31 DAY)), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 1 YEAR)))
 				") or die(SQL_ERROR);
 

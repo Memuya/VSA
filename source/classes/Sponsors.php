@@ -106,7 +106,7 @@ class Sponsors {
 
 			$email_message .= PATH."contact";
 
-			mail($r->email, "Update on your VSA advertisement", $email_message);
+			@mail($r->email, "Update on your VSA advertisement", $email_message);
 		}
 	}
 
@@ -140,9 +140,10 @@ class Sponsors {
 
 			//email user about the status of their advert
 			$email_message  = "Hello ".$r->title." ".$r->fname." ".$r->lname.", \r\n\r\n";
-			$email_message .= "The advertisement you have submitted to the VSA website has been accepted to be displayed!";
+			$email_message .= "This messsage is to inform you that the advertisement that you have submitted to the VSA website has been accepted and is being displayed on the front page.\r\n\r\n";
+			$email_message .= PATH;
 
-			mail($r->email, "Update on your VSA advertisement", $email_message);
+			@mail($r->email, "Update on your VSA advertisement", $email_message);
 		}
 	}
 

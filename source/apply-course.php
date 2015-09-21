@@ -105,7 +105,7 @@ include $t->load("template/header.php");
 							<td><?=$course->date;?></td>
 							<td><?=$course->time;?></td>
 							<td><?=nl2br($course->location);?></td>
-							<td title="Members of VSA are entitled to a 20% discount for courses">$<?=(Login::loggedIn()) ? $course->cost * ((100-20) / 100) : $course->cost;?>*</td>
+							<td title="Members of VSA are entitled to a <?=Courses::getDiscount();?>% discount for courses">$<?=(Login::loggedIn() && !Login::check("course_member")) ? $course->cost * ((100-Courses::getDiscount()) / 100) : $course->cost;?>*</td>
 						</tr>
 					</table>
 

@@ -55,7 +55,7 @@
 						<!--<a href="<?=PATH;?>logout<?=(isset($_SERVER['REQUEST_URI'])) ? '?url='.$_SERVER['REQUEST_URI'] : null;?>" id="logout-btn"><img src="<?=PATH;?>img/logout-btn.png"></a>-->
 						<nav class="top-nav">
 							<ul>
-								<li><a href="<?=PATH;?>account/details">Account</a></li>
+								<li><a href="<?=PATH;?>account/payment">Account</a></li>
 								<li><a href="<?=PATH;?>logout?url=<?=$_SERVER['REQUEST_URI'];?>">Logout, <?=User::getUsername($_SESSION["logged"]);?></a></li>
 								<div class="clear"></div>
 							</ul>

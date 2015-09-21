@@ -24,6 +24,8 @@ class News {
 
 		if(empty($title) || empty($author) || empty($body))
 			Errors::add("All fields are required");
+		else if(strlen($title) > 100)
+			Errors::add("Title must be 100 characters or less");
 		else {
 			$insert = DB::$db->prepare("
 				INSERT INTO news (title, posted_by, body, date)

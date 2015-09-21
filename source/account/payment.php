@@ -21,7 +21,7 @@ $user = $_user->get($_SESSION["logged"]);
 
 //get time left until payment is needed for non-course members
 //OR get time left until account expires for course members
-$date = new DateTime(date('Y-m-d', ($user->type === '4') ? $user->course_member_expiry : $user->payment_due_date));
+$date = new DateTime(date('Y-m-d', ($user->type === '4') ? $user->membership_expiry_date : $user->payment_due_date));
 $today = new DateTime();
 $diff = $today->diff($date);
 
@@ -58,7 +58,7 @@ $diff = $today->diff($date);
 					<?php elseif($user->payment_made === '1'): ?>
 
 						<div class="notice-box green-notice">
-							Your VSA payment has been received!
+							Your VSA payment has been received. Your account is active until the <b><?=date('jS M Y', $user->membership_expiry_date)?></b>
 						</div>
 
 					<?php endif; ?>
