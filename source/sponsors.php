@@ -19,6 +19,7 @@ $q = DB::$db->query("
 	SELECT *
 	FROM users
 	WHERE type = '3'
+	AND active = '1'
 	ORDER BY id
 ");
 

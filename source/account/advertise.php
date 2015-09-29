@@ -13,13 +13,23 @@ include $t->load("includes/init.php");
 if(!Login::check("corporate"))
 	Utility::redirect("index");
 
-$q = DB::$db->prepare("
-	SELECT *
-	FROM ads
-	WHERE id = :id
-");
+try {
+	$q = DB::$db->prepare("
+		SELECT *, ads.id AS adID
+		FROM ads
+		INNER JOIN users
+		ON ads.user_id = users.id
+		WHERE user_id = :id
+	");
 
-$q->execute([':id' => $_SESSION['corporate']]);
+	$q->execute([':id' => $_SESSION['corporate']]);
+} catch(DPOException $ex) {
+	die($ex->getMessage());
+}
+
+$c = $q->rowCount();
+
+if($c !== 0) $r = $q->fetch(PDO::FETCH_OBJ);
 
 include $t->load("template/head.php");
 include $t->load("template/header.php");
@@ -37,12 +47,11 @@ include $t->load("template/header.php");
 					$sponsors = new Sponsors();
 					echo $sponsors->adAd($_FILES['image'], $_SESSION['corporate']);
 				}
-					
 				?>
 
 				<p>Each corporate member is given the opportunity to advertise themselves on the VSA home page. Please use the form below to be featured on the VSA website.</p>
 
-				<p><b>Ideal image should have a resolution of 250x250 pixels.</b></p>
+				<p><b>Ideal image should have a resolution of 250x250 pixels. Image will be resized to 250x250 pixels.</b></p>
 
 				<form method="post" enctype="multipart/form-data">
 					<div class="field">
@@ -55,6 +64,25 @@ include $t->load("template/header.php");
 						<input type="submit" name="upload" value="Add Advertisement">
 					</div>
 				</form>
+
+				<?php if($c !== 0): ?>
+					<div style="margin-top: 20px;">
+						<table class="style">
+							<tr>
+								<th>Company</th>
+								<th>Image</th>
+								<th>URL</th>
+								<th>Status</th>
+							</tr>
+							<tr>
+								<td><?=$r->company;?></td>
+								<td><img src="<?=PATH;?>img/sponsors/<?=$r->adID.".".$r->img_ext;?>" style="width: 100px;"></td>
+								<td><a href="<?=$r->website;?>" target="_blank"><?=$r->website;?></a></td>
+								<td><?=($r->status === '1') ? '<span class="text-green">Active</span>' : '<span class="text-orange">Pending</span>';?></td>
+							</tr>
+						</table>
+					</div>
+				<?php endif; ?>
 			</section>
 
 			<div class="clear"></div>

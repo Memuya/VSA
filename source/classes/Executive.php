@@ -42,20 +42,24 @@ class Executive extends Pagination {
 				Errors::add("Email address not valid");
 
 			if(!Errors::hasErrors()) {
-				$q = DB::$db->prepare("
-					INSERT INTO executives (position, title, fname, lname, organization, telephone, email)
-					VALUES (:position, :title, :fname, :lname, :organization, :telephone, :email)
-				") or die(SQL_ERROR);
+				try {
+					$q = DB::$db->prepare("
+						INSERT INTO executives (position, title, fname, lname, organization, telephone, email)
+						VALUES (:position, :title, :fname, :lname, :organization, :telephone, :email)
+					");
 
-				$q->execute([
-					':position' => $position,
-					':title' => $title,
-					':fname' => $fname,
-					':lname' => $lname,
-					':organization' => $organization,
-					':telephone' => $telephone,
-					':email' => $email
-				]);
+					$q->execute([
+						':position' => $position,
+						':title' => $title,
+						':fname' => $fname,
+						':lname' => $lname,
+						':organization' => $organization,
+						':telephone' => $telephone,
+						':email' => $email
+					]);
+				} catch(PDOException $ex) {
+					die($ex->getMessage());
+				}
 			}
 		}
 
@@ -95,28 +99,32 @@ class Executive extends Pagination {
 				Errors::add("Email addres not valid");
 
 			if(!Errors::hasErrors()) {
-				$q = DB::$db->prepare("
-					UPDATE  executives
-					SET position = :position,
-					title = :title,
-					fname = :fname,
-					lname = :lname,
-					organization = :organization,
-					telephone = :telephone,
-					email = :email
-					WHERE id = :id
-				") or die(SQL_ERROR);
+				try {
+					$q = DB::$db->prepare("
+						UPDATE  executives
+						SET position = :position,
+						title = :title,
+						fname = :fname,
+						lname = :lname,
+						organization = :organization,
+						telephone = :telephone,
+						email = :email
+						WHERE id = :id
+					");
 
-				$q->execute([
-					':position' => $position,
-					':title' => $title,
-					':fname' => $fname,
-					':lname' => $lname,
-					':organization' => $organization,
-					':telephone' => $telephone,
-					':email' => $email,
-					':id' => $id
-				]);
+					$q->execute([
+						':position' => $position,
+						':title' => $title,
+						':fname' => $fname,
+						':lname' => $lname,
+						':organization' => $organization,
+						':telephone' => $telephone,
+						':email' => $email,
+						':id' => $id
+					]);
+				} catch(PDOException $ex) {
+					die($ex->getMessage());
+				}
 			}
 		}
 
@@ -132,24 +140,32 @@ class Executive extends Pagination {
 		$id = (int)$id;
 
 		//check if course ID exist in database
-		$q = DB::$db->prepare("
-			SELECT id
-			FROM executives
-			WHERE id = :id
-		") or die(SQL_ERROR);
+		try {
+			$q = DB::$db->prepare("
+				SELECT id
+				FROM executives
+				WHERE id = :id
+			");
 
-		$q->execute([':id' => $id]);
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$c = $q->rowCount();
 
 		//delete if exist
 		if($c != 0) {
-			$q = DB::$db->prepare("
-				DELETE FROM executives
-				WHERE id = :id
-			") or die(SQL_ERROR);
+			try {
+				$q = DB::$db->prepare("
+					DELETE FROM executives
+					WHERE id = :id
+				");
 
-			$q->execute([':id' => $id]);
+				$q->execute([':id' => $id]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 		}
 	}
 
@@ -160,14 +176,18 @@ class Executive extends Pagination {
 	*/
 	public function get($id) {
 		$id = Validate::cp((int)$id);
-	
-		$q = DB::$db->prepare("
-			SELECT *
-			FROM executives
-			WHERE id = :id
-		") or die(SQL_ERROR);
+		
+		try {
+			$q = DB::$db->prepare("
+				SELECT *
+				FROM executives
+				WHERE id = :id
+			");
 
-		$q->execute([':id' => $id]);
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$this->count = $q->rowCount();
 		$r = $q->fetch(PDO::FETCH_OBJ);
@@ -185,11 +205,15 @@ class Executive extends Pagination {
 		$this->limit = $limit;
 		$this->page = $page;
 
-		$q = DB::$db->query("
-			SELECT SQL_CALC_FOUND_ROWS *
-			FROM executives
-			LIMIT {$this->amount}, {$this->limit}
-		") or die(SQL_ERROR);
+		try {
+			$q = DB::$db->query("
+				SELECT SQL_CALC_FOUND_ROWS *
+				FROM executives
+				LIMIT {$this->amount}, {$this->limit}
+			");
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$this->count = $q->rowCount();
 

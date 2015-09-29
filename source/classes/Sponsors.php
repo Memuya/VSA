@@ -15,7 +15,7 @@ class Sponsors {
 				INNER JOIN users
 				ON users.id = ads.user_id
 				WHERE status = :status
-			") or die(SQL_ERROR);
+			");
 
 			$q->execute([':status' => $status]);
 		} catch(PDOException $ex) {
@@ -51,7 +51,7 @@ class Sponsors {
 				INNER JOIN users
 				ON users.id = ads.user_id
 				WHERE status = :status
-			") or die(SQL_ERROR);
+			");
 
 			$q->execute([':status' => $status]);
 		} catch(PDOException $ex) {
@@ -206,8 +206,17 @@ class Sponsors {
 
 				$lastId = DB::$db->lastInsertId();
 
+				//resize image and save it
+				require_once 'SimpleImage.php';
+				try {
+					$resize = new abeautifulsite\SimpleImage($tmp_name);
+					$resize->resize(250, 250)->save('../img/sponsors/'.$lastId.".".$ext);
+				} catch(Exception $e) {
+					Errors::add($e->getMessage());
+				}
+
 				//upload image here
-				move_uploaded_file($tmp_name, "../img/sponsors/".$lastId.".".$ext);
+				//move_uploaded_file($tmp_name, "../img/sponsors/".$lastId.".".$ext);
 
 				$email_message  = 'A new advertisement has been submitted to the VSA website. Please login to the control panel to accept or decline it.';
 

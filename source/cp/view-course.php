@@ -49,6 +49,7 @@ include $t->load("template/header.php");
 			<?php include $t->load("template/cp-nav.php"); ?>
 
 			<section class="right-main">
+				<div id="feedback"></div>
 				<?php if($_courses->getCount() != 0): ?>
 
 					<table class="style">
@@ -66,7 +67,7 @@ include $t->load("template/header.php");
 									<td><?=$r->user_id;?></td>
 									<td><a href="<?=PATH?>cp/view-user?id=<?=$r->user_id;?>"><?=$r->username;?></a></td>
 									<td><?=($r->status === '0') ? '<span class="text-orange">Pending</span>' : '<span class="text-green">Active</span>';?></td>
-									<td><?=($r->status === '0') ? '<a href="'.PATH.'cp/change-enrolment-status?id='.$r->enrolment_id.'&status=1" class="btn">Enrol</a>' : '<a href="'.PATH.'cp/change-enrolment-status?id='.$r->enrolment_id.'&status=0" class="btn">Change to Pending</a>';?></td>
+									<td><?=($r->status === '0') ? '<a href="#" class="btn enrol-btn" data-status="1" data-enrolment-id="'.$r->enrolment_id.'">Enrol</a>' : '<a href="#" class="btn enrol-btn" data-status="0" data-enrolment-id="'.$r->enrolment_id.'">Change to Pending</a>';?></td>
 									<td><a href="#" data-link="<?=PATH;?>cp/delete-enrolment?id=<?=$r->enrolment_id;?>" class="btn delete-btn"><i class="fa fa-times"></i></a></td>
 								</tr>
 
@@ -84,4 +85,28 @@ include $t->load("template/header.php");
 			<div class="clear"></div>
 		</div>
 	</div>
+	<script>
+		$(document).ready(function() {
+			$(".enrol-btn").click(function() {
+				$("#feedback").html('<div class="center"><img src="../img/ajax-loader.gif"></div>');
+				
+				$.ajax({
+					type: "POST",
+					url: "../ajax/change-course-status.php",
+					data: {
+						status: $(this).attr("data-status"),
+						enrolment_id: $(this).attr("data-enrolment-id")
+					},
+					success: function(data) {
+						$("#feedback").hide().html(data).fadeIn();
+					},
+					error: function() {
+						$("#feedback").hide().html("An error as occured").fadeIn();
+					}
+				});
+				$(this).closest("tr").remove();
+				return false;
+			});
+		});
+	</script>
 <?php include $t->load("template/footer.php"); ?>

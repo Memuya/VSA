@@ -58,12 +58,16 @@ class Validate {
 		//check to see if the email address is already in-use
 		if($check_db === 1) {
 			//check to see if the username is already in-use
-			$user_q = DB::$db->prepare("
-				SELECT username
-				FROM users
-				WHERE username = :username
-			") or die(SQL_ERROR);
-			$user_q->execute([':username' => $username]);
+			try {
+				$user_q = DB::$db->prepare("
+					SELECT username
+					FROM users
+					WHERE username = :username
+				") or die(SQL_ERROR);
+				$user_q->execute([':username' => $username]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 			$user_c = $user_q->rowCount();
 		}
 
@@ -84,12 +88,17 @@ class Validate {
 	public static function email($email, $check_db = 1) {
 		//check to see if the email address is already in-use
 		if($check_db === 1) {
-			$email_q = DB::$db->prepare("
-				SELECT email
-				FROM users
-				WHERE email = :email
-			") or die(SQL_ERROR);
-			$email_q->execute([':email' => $email]);
+			try {
+				$email_q = DB::$db->prepare("
+					SELECT email
+					FROM users
+					WHERE email = :email
+				") or die(SQL_ERROR);
+				$email_q->execute([':email' => $email]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
+			
 			$email_c = $email_q->rowCount();
 		}
 

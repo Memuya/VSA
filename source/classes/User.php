@@ -9,13 +9,17 @@ class User extends Pagination {
 	* @param int $id
 	*/
 	public static function getUsername($id) {
-		$q = DB::$db->prepare("
-			SELECT username
-			FROM users
-			WHERE id = :id
-		") or die(SQL_ERROR);
+		try {
+			$q = DB::$db->prepare("
+				SELECT username
+				FROM users
+				WHERE id = :id
+			");
 
-		$q->execute([':id' => $id]);
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$c = $q->rowCount();
 		$r = $q->fetch(PDO::FETCH_OBJ);
@@ -53,11 +57,15 @@ class User extends Pagination {
 		$this->limit = $limit;
 		$this->page = $page;
 
-		$q = DB::$db->query("
-			SELECT SQL_CALC_FOUND_ROWS *
-			FROM users
-			LIMIT {$this->amount}, {$this->limit}
-		");
+		try {
+			$q = DB::$db->query("
+				SELECT SQL_CALC_FOUND_ROWS *
+				FROM users
+				LIMIT {$this->amount}, {$this->limit}
+			");
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$this->count = $q->rowCount();
 
@@ -80,15 +88,19 @@ class User extends Pagination {
 	public function get($id) {
 		$id = (int)$id;
 
-		$q = DB::$db->prepare("
-			SELECT *, users.id
-			FROM users
-			INNER JOIN membership_types
-			ON membership_types.id = users.type
-			WHERE users.id = :id
-		") or die(SQL_ERROR);
+		try {
+			$q = DB::$db->prepare("
+				SELECT *, users.id
+				FROM users
+				INNER JOIN membership_types
+				ON membership_types.id = users.type
+				WHERE users.id = :id
+			");
 
-		$q->execute([':id' => $id]);
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$this->count = $q->rowCount();
 		$r = $q->fetch(PDO::FETCH_OBJ);
@@ -99,7 +111,7 @@ class User extends Pagination {
 	}
 
 	/**
-	* Search for a user via their username
+	* Search for a user via their username or ID
 	*
 	* @param string $string
 	*/
@@ -107,31 +119,39 @@ class User extends Pagination {
 		if(!empty($string)) {
 			//check if string is a username
 			if(!is_numeric($string)) {
-				$q = DB::$db->prepare("
-					SELECT *, users.id
-					FROM users
-					INNER JOIN membership_types
-					ON membership_types.id = users.type
-					WHERE MATCH(users.username) AGAINST(:string IN BOOLEAN MODE)
-					OR users.username LIKE :second_string
-				");
+				try {
+					$q = DB::$db->prepare("
+						SELECT *, users.id
+						FROM users
+						INNER JOIN membership_types
+						ON membership_types.id = users.type
+						WHERE MATCH(users.username) AGAINST(:string IN BOOLEAN MODE)
+						OR users.username LIKE :second_string
+					");
 
-				$q->execute([
-					':string' => $string.'*',
-					':second_string' => '%'.$string.'%'
-				]);
+					$q->execute([
+						':string' => $string.'*',
+						':second_string' => '%'.$string.'%'
+					]);
+				} catch(PDOException $ex) {
+					die($ex->getMessage());
+				}
 			} else {
 				$id = (int)$string;
 
-				$q = DB::$db->prepare("
-					SELECT *, users.id
-					FROM users
-					INNER JOIN membership_types
-					ON membership_types.id = users.type
-					WHERE users.id = :id
-				");
+				try {
+					$q = DB::$db->prepare("
+						SELECT *, users.id
+						FROM users
+						INNER JOIN membership_types
+						ON membership_types.id = users.type
+						WHERE users.id = :id
+					");
 
-				$q->execute([':id' => $id]);
+					$q->execute([':id' => $id]);
+				} catch(PDOException $ex) {
+					die($ex->getMessage());
+				}
 			}
 
 			$this->count = $q->rowCount();
@@ -224,31 +244,39 @@ class User extends Pagination {
 			Errors::add("All fields are required");
 		} else {
 			//check to see if the username is already in-use
-			$user_q = DB::$db->prepare("
-				SELECT username
-				FROM users
-				WHERE username = :username
-				AND id != :id
-			") or die(SQL_ERROR);
+			try {
+				$user_q = DB::$db->prepare("
+					SELECT username
+					FROM users
+					WHERE username = :username
+					AND id != :id
+				");
 
-			$user_q->execute([
-				':id' => $id,
-				':username' => $username
-			]);
+				$user_q->execute([
+					':id' => $id,
+					':username' => $username
+				]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 			$user_c = $user_q->rowCount();
 
 			//check to see if the email address is already in-use
-			$email_q = DB::$db->prepare("
-				SELECT email
-				FROM users
-				WHERE email = :email
-				AND id != :id
-			") or die(SQL_ERROR);
+			try {
+				$email_q = DB::$db->prepare("
+					SELECT email
+					FROM users
+					WHERE email = :email
+					AND id != :id
+				");
 
-			$email_q->execute([
-				':id' => $id,
-				':email' => $email
-			]);
+				$email_q->execute([
+					':id' => $id,
+					':email' => $email
+				]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 			$email_c = $email_q->rowCount();
 
 			//validate $blocked
@@ -361,54 +389,58 @@ class User extends Pagination {
 			}
 
 			if(!Errors::hasErrors()) {
-				//prepare query
-				$insert = DB::$db->prepare("
-					UPDATE users
-					SET username = :username, 
-					title = :title, 
-					fname = :fname, 
-					lname = :lname, 
-					email = :email, 
-					address = :address, 
-					suburb = :suburb, 
-					state = :state, 
-					postcode = :postcode, 
-					country = :country, 
-					telephone = :telephone, 
-					website = :website, 
-					fax = :fax, 
-					company = :company, 
-					blocked = :blocked, 
-					type = :type, 
-					active = :active, 
-					level = :level,
-					payment_made = :payment_made
-					WHERE id = :id
-				");
+				try {
+					//prepare query
+					$insert = DB::$db->prepare("
+						UPDATE users
+						SET username = :username, 
+						title = :title, 
+						fname = :fname, 
+						lname = :lname, 
+						email = :email, 
+						address = :address, 
+						suburb = :suburb, 
+						state = :state, 
+						postcode = :postcode, 
+						country = :country, 
+						telephone = :telephone, 
+						website = :website, 
+						fax = :fax, 
+						company = :company, 
+						blocked = :blocked, 
+						type = :type, 
+						active = :active, 
+						level = :level,
+						payment_made = :payment_made
+						WHERE id = :id
+					");
 
-				//execute query
-				$insert->execute([
-					':username' => $username,
-					':title' => $title,
-					':fname' => $fname,
-					':lname' => $lname,
-					':email' => $email,
-					':address' => $address,
-					':suburb' => $suburb,
-					':state' => $state,
-					':postcode' => $postcode,
-					':country' => $country,
-					':telephone' => $telephone,
-					':website' => $website,
-					':fax' => $fax,
-					':company' => $company,
-					':blocked' => $blocked,
-					':type' => $type,
-					':active' => $active,
-					':level' => $level,
-					':payment_made' => $payment_made,
-					':id' => $id
-				]);
+					//execute query
+					$insert->execute([
+						':username' => $username,
+						':title' => $title,
+						':fname' => $fname,
+						':lname' => $lname,
+						':email' => $email,
+						':address' => $address,
+						':suburb' => $suburb,
+						':state' => $state,
+						':postcode' => $postcode,
+						':country' => $country,
+						':telephone' => $telephone,
+						':website' => $website,
+						':fax' => $fax,
+						':company' => $company,
+						':blocked' => $blocked,
+						':type' => $type,
+						':active' => $active,
+						':level' => $level,
+						':payment_made' => $payment_made,
+						':id' => $id
+					]);
+				} catch(PDOException $ex) {
+					die($ex->getMessage());
+				}
 			}
 		}
 
@@ -428,13 +460,17 @@ class User extends Pagination {
 
 		//check if email address
 		if((strpos($info, '@')) && filter_var($info, FILTER_VALIDATE_EMAIL)) {
-			$q = DB::$db->prepare("
-				SELECT id, email
-				FROM users
-				WHERE email = :info
-			");
+			try {
+				$q = DB::$db->prepare("
+					SELECT id, email
+					FROM users
+					WHERE email = :info
+				");
 
-			$q->execute([':info' => $info]);
+				$q->execute([':info' => $info]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 
 			$c = $q->rowCount();
 
@@ -443,17 +479,21 @@ class User extends Pagination {
 			else {
 				$r = $q->fetch(PDO::FETCH_OBJ);
 
-				$q = DB::$db->prepare("
-					UPDATE users
-					SET password_reset = '1',
-					reset_code = :reset_code
-					WHERE id = :id
-				");
+				try {
+					$q = DB::$db->prepare("
+						UPDATE users
+						SET password_reset = '1',
+						reset_code = :reset_code
+						WHERE id = :id
+					");
 
-				$q->execute([
-					':reset_code' => $reset_code,
-					':id' => $r->id
-				]);
+					$q->execute([
+						':reset_code' => $reset_code,
+						':id' => $r->id
+					]);
+				} catch(PDOException $ex) {
+					die($ex->getMessage());
+				}
 
 				$message  = "Please follow the link below to recover your password:\r\n\r\n";
 				$message .= PATH."reset-password?id=".$r->id."&code=".$reset_code;
@@ -464,13 +504,17 @@ class User extends Pagination {
 			
 		//check if username
 		} else {
-			$q = DB::$db->prepare("
-				SELECT id, email
-				FROM users
-				WHERE username = :info
-			");
+			try {
+				$q = DB::$db->prepare("
+					SELECT id, email
+					FROM users
+					WHERE username = :info
+				");
 
-			$q->execute([':info' => $info]);
+				$q->execute([':info' => $info]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 
 			$c = $q->rowCount();
 
@@ -479,17 +523,21 @@ class User extends Pagination {
 			else {
 				$r = $q->fetch(PDO::FETCH_OBJ);
 
-				$q = DB::$db->prepare("
-					UPDATE users
-					SET password_reset = '1',
-					reset_code = :reset_code
-					WHERE id = :id
-				");
+				try {
+					$q = DB::$db->prepare("
+						UPDATE users
+						SET password_reset = '1',
+						reset_code = :reset_code
+						WHERE id = :id
+					");
 
-				$q->execute([
-					':reset_code' => $reset_code,
-					':id' => $r->id
-				]);
+					$q->execute([
+						':reset_code' => $reset_code,
+						':id' => $r->id
+					]);
+				} catch(PDOException $ex) {
+					die($ex->getMessage());
+				}
 
 				$message  = "Please follow the link below to recover your password:"."\r\n\r\n";
 				$message .= PATH."reset-password?id=".$r->id."&code=".$reset_code;
@@ -500,7 +548,7 @@ class User extends Pagination {
 		}
 
 		//set success message
-		$text = (!empty($text)) ? $text." ".PATH."reset-password?id=".$r->id."&code=".$reset_code : "Please check your email address for a link to reset your password. <a href=\"".PATH."reset-password?id=".$r->id."&code=".$reset_code."\">Test Link</a>";
+		$text = (!empty($text)) ? $text : "Please check your email address for a link to reset your password.";
 
 		return Errors::displayErrors($text);
 	}
@@ -522,18 +570,22 @@ class User extends Pagination {
 		if(empty($id) || empty($reset_code))
 			Errors::add("The URL provided is not valid. Please find the link previously sent to your email address.");
 		else {
-			$q = DB::$db->prepare("
-				SELECT id
-				FROM users
-				WHERE id = :id
-				AND reset_code = :reset_code
-				AND password_reset = '1'
-			");
+			try {
+				$q = DB::$db->prepare("
+					SELECT id
+					FROM users
+					WHERE id = :id
+					AND reset_code = :reset_code
+					AND password_reset = '1'
+				");
 
-			$q->execute([
-				':id' => $id,
-				':reset_code' => $reset_code
-			]);
+				$q->execute([
+					':id' => $id,
+					':reset_code' => $reset_code
+				]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 
 			$c = $q->rowCount();
 
@@ -548,18 +600,22 @@ class User extends Pagination {
 					$hash_pass = password_hash($password, PASSWORD_BCRYPT, ['cost' => 10]);
 					$r = $q->fetch(PDO::FETCH_OBJ);
 
-					$update = DB::$db->prepare("
-						UPDATE users
-						SET password = :password,
-						password_reset = '0',
-						reset_code = ''
-						WHERE id = :id
-					");
+					try {
+						$update = DB::$db->prepare("
+							UPDATE users
+							SET password = :password,
+							password_reset = '0',
+							reset_code = ''
+							WHERE id = :id
+						");
 
-					$update->execute([
-						':password' => $hash_pass,
-						':id' => $r->id
-					]);
+						$update->execute([
+							':password' => $hash_pass,
+							':id' => $r->id
+						]);
+					} catch(PDOException $ex) {
+						die($ex->getMessage());
+					}
 				}
 			}
 		}
@@ -633,12 +689,17 @@ class User extends Pagination {
 	* @param ing $id
 	*/
 	public function delete($id) {
-		$q = DB::$db->prepare("
-			SELECT id, type
-			FROM users
-			WHERE id = :id
-		");
-		$q->execute([':id' => $id]);
+		try {
+			$q = DB::$db->prepare("
+				SELECT id, type
+				FROM users
+				WHERE id = :id
+			");
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
+		
 		$c = $q->rowCount();
 		$r = $q->fetch(PDO::FETCH_OBJ);
 

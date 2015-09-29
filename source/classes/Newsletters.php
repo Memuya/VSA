@@ -24,12 +24,16 @@ class Newsletters {
 		else {
 			try {
 				//insert into database
-				$q = DB::$db->prepare("
-					INSERT INTO newsletters (title, date)
-					VALUES (:title, UNIX_TIMESTAMP(NOW()))
-				");
+				try {
+					$q = DB::$db->prepare("
+						INSERT INTO newsletters (title, date)
+						VALUES (:title, UNIX_TIMESTAMP(NOW()))
+					");
 
-				$q->execute([':title' => $title]);
+					$q->execute([':title' => $title]);
+				} catch(PDOException $ex) {
+					die($ex->getMessage());
+				}
 
 				//grab the ID generated for the last query
 				$last_id = DB::$db->lastInsertId();
@@ -53,11 +57,15 @@ class Newsletters {
 	* Returns all newsletters
 	*/
 	public function getAll() {
-		$q = DB::$db->query("
-			SELECT *
-			FROM newsletters
-			ORDER BY id DESC
-		") or die(SQL_ERROR);
+		try {
+			$q = DB::$db->query("
+				SELECT *
+				FROM newsletters
+				ORDER BY id DESC
+			");
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$this->count = $q->rowCount();
 
@@ -77,13 +85,17 @@ class Newsletters {
 		$id = (int)$id;
 
 		//check if newsletter exist in database
-		$q = DB::$db->prepare("
-			SELECT id
-			FROM newsletters
-			WHERE id = :id
-		") or die(SQL_ERROR);
+		try {
+			$q = DB::$db->prepare("
+				SELECT id
+				FROM newsletters
+				WHERE id = :id
+			");
 
-		$q->execute([':id' => $id]);
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$c = $q->rowCount();
 		$r = $q->fetch(PDO::FETCH_OBJ);
@@ -93,14 +105,18 @@ class Newsletters {
 			//delete pdf file
 			unlink("../newsletters/".$r->id.".pdf");
 
-			$q = DB::$db->prepare("
-				DELETE FROM newsletters
-				WHERE id = :id
-			") or die(SQL_ERROR);
+			try {
+				$q = DB::$db->prepare("
+					DELETE FROM newsletters
+					WHERE id = :id
+				");
 
-			$q->execute([
-				':id' => $id
-			]);
+				$q->execute([
+					':id' => $id
+				]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 		}
 	}
 

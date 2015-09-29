@@ -27,17 +27,21 @@ class News {
 		else if(strlen($title) > 100)
 			Errors::add("Title must be 100 characters or less");
 		else {
-			$insert = DB::$db->prepare("
-				INSERT INTO news (title, posted_by, body, date)
-				VALUES (:title, :author, :body, UNIX_TIMESTAMP(NOW()))
-			");
+			try {
+				$insert = DB::$db->prepare("
+					INSERT INTO news (title, posted_by, body, date)
+					VALUES (:title, :author, :body, UNIX_TIMESTAMP(NOW()))
+				");
 
-			//run the query
-			$insert->execute([
-				':title' => $title,
-				':author' => $author,
-				':body' => $body
-			]);
+				//run the query
+				$insert->execute([
+					':title' => $title,
+					':author' => $author,
+					':body' => $body
+				]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 		}
 
 		return Errors::displayErrors("News article successfully posted!");
@@ -57,20 +61,24 @@ class News {
 		if(empty($message) || empty($title))
 			Errors::add("All fields are required");
 		else {
-			//preapre the query
-			$q = DB::$db->prepare("
-				UPDATE news
-				SET body = :body,
-				title = :title
-				WHERE id = :id
-			") or die(SQL_ERROR);
+			try {
+				//preapre the query
+				$q = DB::$db->prepare("
+					UPDATE news
+					SET body = :body,
+					title = :title
+					WHERE id = :id
+				");
 
-			//run the query
-			$q->execute([
-				':body' => $message,
-				':title' => $title,
-				':id' => $id
-			]);
+				//run the query
+				$q->execute([
+					':body' => $message,
+					':title' => $title,
+					':id' => $id
+				]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 		}
 
 		return Errors::displayErrors("News Article successfully updated!");
@@ -85,26 +93,34 @@ class News {
 		$id = (int)$id;
 
 		//check if news article exist in database
-		$q = DB::$db->prepare("
-			SELECT id
-			FROM news
-			WHERE id = :id
-		") or die(SQL_ERROR);
+		try {
+			$q = DB::$db->prepare("
+				SELECT id
+				FROM news
+				WHERE id = :id
+			");
 
-		$q->execute([':id' => $id]);
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$c = $q->rowCount();
 
 		//delete if exist
 		if($c != 0) {
-			$q = DB::$db->prepare("
-				DELETE FROM news
-				WHERE id = :id
-			") or die(SQL_ERROR);
+			try {
+				$q = DB::$db->prepare("
+					DELETE FROM news
+					WHERE id = :id
+				");
 
-			$q->execute([
-				':id' => $id
-			]);
+				$q->execute([
+					':id' => $id
+				]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 		}
 	}
 
@@ -115,16 +131,20 @@ class News {
 	*/
 	public function get($id) {
 		$id = Validate::cp((int)$id);
-	
-		$q = DB::$db->prepare("
-			SELECT news.*, CONCAT(users.title, ' ', users.fname, ' ', users.lname) as full_name
-			FROM news
-			INNER JOIN users
-			ON news.posted_by = users.id
-			WHERE news.id = :id
-		") or die($q->errorInfo());
+		
+		try {
+			$q = DB::$db->prepare("
+				SELECT news.*, CONCAT(users.title, ' ', users.fname, ' ', users.lname) as full_name
+				FROM news
+				INNER JOIN users
+				ON news.posted_by = users.id
+				WHERE news.id = :id
+			");
 
-		$q->execute([':id' => $id]);
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$this->count = $q->rowCount();
 		$r = $q->fetch(PDO::FETCH_OBJ);
@@ -138,14 +158,18 @@ class News {
 	* Returns all news articles
 	*/
 	public function getAll() {
-		$q = DB::$db->query("
-			SELECT news.*, CONCAT(users.title, ' ', users.fname, ' ', users.lname) as full_name
-			FROM news
-			INNER JOIN users
-			ON news.posted_by = users.id
-			ORDER BY id DESC
-			LIMIT 0, 10
-		") or die(SQL_ERROR);
+		try {
+			$q = DB::$db->query("
+				SELECT news.*, CONCAT(users.title, ' ', users.fname, ' ', users.lname) as full_name
+				FROM news
+				INNER JOIN users
+				ON news.posted_by = users.id
+				ORDER BY id DESC
+				LIMIT 0, 10
+			");
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$this->count = $q->rowCount();
 

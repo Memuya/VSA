@@ -68,22 +68,38 @@ $(document).ready(function() {
 		$(delete_btn).remove();
 
 		return false;
+	});	
+});
+
+//change the way the main navigation displays itself depending on screen-size when not on a mobile device
+if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+	$(window).resize(function() {
+		//hide/show main navigation when window is resized
+		if($(window).width() >= 550) {
+			$(".main-nav").show();
+			$(".sidebar").show();
+		} else {
+			$(".main-nav").hide();
+			$(".sidebar").show();
+		}
+
+		if($(window).width() >= 980) {
+			$(".sidebar").show();
+		} else {
+			$(".sidebar").hide();
+		}
 	});
-});
 
-$(window).resize(function() {
-	//hide/show main navigation when window is resized
-	if($(window).width() >= 550) {
-		$(".main-nav").show();
-		$(".sidebar").show();
-	} else {
-		$(".main-nav").hide();
-		$(".sidebar").show();
-	}
+//chage the way the main navigation displays itself when on a mobile device and orientation is changed
+//NOTE - This fixes the navigation from hiding itself when scrolling on the page
+} else {
+	window.addEventListener("orientationchange", function() {
+		if(window.innerHeight > window.innerWidth) {
+			$(".main-nav").show();
+		} else {
+			$(".main-nav").hide();
+		}
+	}, false);
+}
+	
 
-	if($(window).width() >= 980) {
-		$(".sidebar").show();
-	} else {
-		$(".sidebar").hide();
-	}
-});

@@ -20,13 +20,17 @@ class Login {
 		if(empty($this->username) || empty($this->password))
 			Errors::add("All fields are required");
 		else {
-			$q = DB::$db->prepare("
-				SELECT id, blocked, type, active, password, level, password_reset, date_created, payment_due_date, payment_made, membership_expiry_date
-				FROM users
-				WHERE username = :username
-			") or die(DB::$db->error);
+			try {
+				$q = DB::$db->prepare("
+					SELECT id, blocked, type, active, password, level, password_reset, date_created, payment_due_date, payment_made, membership_expiry_date
+					FROM users
+					WHERE username = :username
+				");
 
-			$q->execute([':username' => $this->username]);
+				$q->execute([':username' => $this->username]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 
 			$c = $q->rowCount();
 			$r = $q->fetch(PDO::FETCH_OBJ);

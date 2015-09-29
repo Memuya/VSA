@@ -14,10 +14,14 @@ include $t->load("template/head.php");
 include $t->load("template/header.php");
 
 //query database for welcome message
-$q = DB::$db->query("
-	SELECT body
-	FROM welcome_message
-") or die(SQL_ERROR);
+try {
+	$q = DB::$db->query("
+		SELECT body
+		FROM welcome_message
+	");
+} catch(PDOException $ex) {
+	die($ex->getMessage());
+}
 $c = $q->rowCount();
 $r = $q->fetch(PDO::FETCH_OBJ);
 ?>	

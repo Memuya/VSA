@@ -49,7 +49,7 @@ include $t->load("template/header.php");
 					<input type="submit" name="login" id="login" value="Login">
 				</div>
 
-				<div class="field">
+				<div class="field" style="margin-top: 10px;">
 					<a href="<?=PATH;?>forgot-password">Forgot your password?</a>
 				</div>
 			</form>

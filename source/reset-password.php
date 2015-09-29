@@ -19,15 +19,18 @@ include $t->load("template/header.php");
 
 $id = (isset($_GET['id'])) ? (int)$_GET['id'] : null;
 $reset_code = (isset($_GET['code'])) ? $_GET['code'] : null;
+
+$user = new User;
+
+$username = $user->get($id)->username;
 ?>	
 	<div id="page-heading">
-		<h1>Reset Password</h1>
+		<h1>Reset <?=$username;?>'s Password</h1>
 	</div>
 	<div class="outer-wrapper white">
 		<div class="inner-wrapper">
 			<?php
 			if(isset($_POST['submit'])) {
-				$user = new User;
 				echo $user->resetPassword(
 					$id,
 					$reset_code,

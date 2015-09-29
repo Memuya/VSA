@@ -49,7 +49,7 @@ $ads = $sponsors->getAds();
 									<img src="<?=PATH.'img/sponsors/'.$ad->adID.".".$ad->img_ext;?>" style="width: 100px;">
 								</a>
 							</td>
-							<td><?=$ad->website;?></td>
+							<td><a href="<?=$ad->website;?>" target="_blank"><?=$ad->website;?></a></td>
 							<td><a href="#" data-link="<?=PATH?>cp/delete-ad?id=<?=$ad->adID;?>" class="delete-btn btn"><i class="fa fa-times"></i></a></td>
 						</tr>
 

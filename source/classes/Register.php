@@ -123,32 +123,36 @@ class Register {
 				//set expire for course members
 				$course_member_expiry = ($type_num === 4) ? "UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 31 DAY))" : 0;
 
-				//prepare query
-				$insert = DB::$db->prepare("
-					INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, fax, website, company, blocked, type, activation_code, active, level, payment_made, date_created, payment_due_date, membership_expiry_date) 
-					VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, :fax, :website, :company, '0', :type, :activation_code, '1', '2', '0', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 31 DAY)), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 1 YEAR)))
-				") or die(SQL_ERROR);
+				try {
+					//prepare query
+					$insert = DB::$db->prepare("
+						INSERT INTO users (username, password, email, title, fname, lname, address, suburb, state, postcode, country, telephone, fax, website, company, blocked, type, activation_code, active, level, payment_made, date_created, payment_due_date, membership_expiry_date) 
+						VALUES (:username, :password, :email, :title, :fname, :lname, :address, :suburb, :state, :postcode, :country, :telephone, :fax, :website, :company, '0', :type, :activation_code, '0', '2', '0', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 31 DAY)), UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 1 YEAR)))
+					");
 
-				//execute query
-				$insert->execute([
-					':username' => $this->username,
-					':password' => $hash_pass,
-					':email' => $this->email,
-					':title' => $this->title,
-					':fname' => $this->fname,
-					':lname' => $this->lname,
-					':address' => $this->address,
-					':suburb' => $this->suburb,
-					':state' => $this->state,
-					':postcode' => $this->postcode,
-					':country' => $this->country,
-					':telephone' => $this->telephone,
-					':fax' => $this->fax,
-					':website' => $this->website,
-					':company' => $this->company,
-					':type' => $type_num,
-					':activation_code' => $activation_code
-				]);
+					//execute query
+					$insert->execute([
+						':username' => $this->username,
+						':password' => $hash_pass,
+						':email' => $this->email,
+						':title' => $this->title,
+						':fname' => $this->fname,
+						':lname' => $this->lname,
+						':address' => $this->address,
+						':suburb' => $this->suburb,
+						':state' => $this->state,
+						':postcode' => $this->postcode,
+						':country' => $this->country,
+						':telephone' => $this->telephone,
+						':fax' => $this->fax,
+						':website' => $this->website,
+						':company' => $this->company,
+						':type' => $type_num,
+						':activation_code' => $activation_code
+					]);
+				} catch(PDOException $ex) {
+					Errors::add($ex->getMessage());
+				}
 
 				$user_id = DB::$db->lastInsertId();
 
@@ -162,6 +166,6 @@ class Register {
 		}
 
 		//display error or success message
-		return Errors::displayErrors("Congratulations! You have successfully registered an account!");
+		return Errors::displayErrors("Congratulations, you have successfully registered an account! Your account must be activated before you can login. Please check your email for an activation link.");
 	}
 }

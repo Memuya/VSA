@@ -1,20 +1,11 @@
-- Fix extensions in css to work in all modern browsers
 - Include Google Analytics
 - Make registration page change depending on if Australia is their chosen country
 
-- Validate all forms that require it
-	- e.g If database field only accepts 255 characters, validate that
-	- Add them to the validation class like I did for username and email?
-- Put try/catch statements around all PDO queries to catch errors/exceptions
-- Deleting an account
-	- If a corporate user is deleted, delete any ads they have submitted
-	- Delete any enrolments
-- How are course discounts applied/displayed?
-- Change it so a user has to activate their account via a link sent to their email when they register for an account
 
-- Make another field in the users table called "membership_expire_date" and display it in the payment page
-	- Membership must be renewed every year
 - Add recaptcha on contact page?
+
+- Change PATH const from "localhost/vsa/" to whatever is needed out of development
+- Delete searchAjax in User class if not needed
 
 
 SEMI-FINISHED:
@@ -48,3 +39,17 @@ FINISHED:
 	- The floating elements don't fit
 - Accounts have to expire after a year [DONE]
 	- Make functionality not colide with course members stuff
+- Change it so a user has to activate their account via a link sent to their email when they register for an account [DONE]
+- Deleting an account [DONE]
+	- If a corporate user is deleted, delete any ads they have submitted
+	- Delete any enrolments
+- How are course discounts applied/displayed? [DONE]
+	- The value of the course price is saved in the database for each enrolment
+- Make another field in the users table called "membership_expire_date" and display it in the payment page [DONE]
+	- Membership must be renewed every year
+- Remove "Test link" from recover password [DONE]
+- Validate all forms that require it [DONE?]
+	- e.g If database field only accepts 255 characters, validate that
+	- Add them to the validation class like I did for username and email?
+- Put try/catch statements around all PDO queries to catch errors/exceptions [DONE]
+- Fix extensions in css to work in all modern browsers [DONE]

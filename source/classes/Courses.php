@@ -126,24 +126,32 @@ class Courses {
 		$id = (int)$id;
 
 		//check if course ID exist in database
-		$q = DB::$db->prepare("
-			SELECT id
-			FROM courses
-			WHERE id = :id
-		") or die($q->errorInfo());
+		try {
+			$q = DB::$db->prepare("
+				SELECT id
+				FROM courses
+				WHERE id = :id
+			");
 
-		$q->execute([':id' => $id]);
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$c = $q->rowCount();
 
 		//delete if exist
 		if($c != 0) {
-			$q = DB::$db->prepare("
-				DELETE FROM courses
-				WHERE id = :id
-			") or die($q->errorInfo());
+			try {
+				$q = DB::$db->prepare("
+					DELETE FROM courses
+					WHERE id = :id
+				");
 
-			$q->execute([':id' => $id]);
+				$q->execute([':id' => $id]);
+			} catch(PDOException $ex) {
+				die($ex->getMessage());
+			}
 
 			//delete all enrolments for that course
 			$q = DB::$db->prepare("
@@ -162,14 +170,17 @@ class Courses {
 	*/
 	public function get($id) {
 		$id = Validate::cp((int)$id);
-	
-		$q = DB::$db->prepare("
-			SELECT *
-			FROM courses
-			WHERE id = :id
-		") or die(SQL_ERROR);
+		try {
+			$q = DB::$db->prepare("
+				SELECT *
+				FROM courses
+				WHERE id = :id
+			");
 
-		$q->execute([':id' => $id]);
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$this->count = $q->rowCount();
 		$r = $q->fetch(PDO::FETCH_OBJ);
@@ -183,11 +194,15 @@ class Courses {
 	* Returns all courses
 	*/
 	public function getAll() {
-		$q = DB::$db->query("
-			SELECT *
-			FROM courses
-			ORDER BY code
-		") or die(SQL_ERROR);
+		try {
+			$q = DB::$db->query("
+				SELECT *
+				FROM courses
+				ORDER BY code
+			");
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$this->count = $q->rowCount();
 
@@ -343,15 +358,19 @@ class Courses {
 	public function getUserEnrolments($user_id) {
 		$user_id = (int)$user_id;
 
-		$q = DB::$db->prepare("
-			SELECT *
-			FROM enrolments
-			INNER JOIN courses
-			ON enrolments.course_id = courses.id
-			WHERE enrolments.user_id = :id
-		");
+		try {
+			$q = DB::$db->prepare("
+				SELECT *
+				FROM enrolments
+				INNER JOIN courses
+				ON enrolments.course_id = courses.id
+				WHERE enrolments.user_id = :id
+			");
 
-		$q->execute([':id' => $user_id]);
+			$q->execute([':id' => $user_id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 
 		$this->count = $q->rowCount();
 
@@ -439,17 +458,22 @@ class Courses {
 				die($ex->getMessage());
 			}
 		}
+
+		return Errors::displayErrors("Successfully changed status of enrolment");
 	}
 
 	public function deleteEnrolment($id) {
 		$id = (int)$id;
+		try {
+			$q = DB::$db->prepare("
+				DELETE FROM enrolments
+				WHERE id = :id
+			");
 
-		$q = DB::$db->prepare("
-			DELETE FROM enrolments
-			WHERE id = :id
-		");
-
-		$q->execute([':id' => $id]);
+			$q->execute([':id' => $id]);
+		} catch(PDOException $ex) {
+			die($ex->getMessage());
+		}
 	}
 
 	/**
