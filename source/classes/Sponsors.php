@@ -221,7 +221,7 @@ class Sponsors {
 				$email_message  = 'A new advertisement has been submitted to the VSA website. Please login to the control panel to accept or decline it.';
 
 				//send an email to an administrator (all of them?) to notify them that they have a ad pending
-				mail('admin@vacuumsociety.org.au', "A new advertisement has been submitted", $email_message);
+				mail('support@vacuumsociety.org.au', "A new advertisement has been submitted", $email_message);
 			}
 		}
 

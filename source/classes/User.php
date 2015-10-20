@@ -221,7 +221,7 @@ class User extends Pagination {
 	* @param string $level
 	* @param string $payment_made
 	*/
-	public function edit($id, $username, $title, $fname, $lname, $email, $address, $suburb, $state, $postcode, $country, $telephone, $company, $website, $fax, $blocked, $type, $active, $level, $payment_made) {
+	public function edit($id, $username, $title, $fname, $lname, $email, $address, $suburb, $state, $postcode, $country, $telephone, $company, $website, $fax, $blocked, $type, $active, $level, $payment_made, $new_expire_date) {
 		$id = (int)$id;
 		$username = Validate::post($username);
 		$title = Validate::post($title);
@@ -239,6 +239,7 @@ class User extends Pagination {
 		$email = Validate::post($email);
 		$type = Validate::post($type);
 		$payment_made = Validate::post($payment_made);
+		$new_expire_date = (!empty($new_expire_date)) ? strtotime($new_expire_date) : null;
 
 		if(empty($id) || empty($username) || empty($fname) || empty($lname) || empty($email) || empty($address) || empty($suburb) || empty($state) || empty($postcode) || empty($country) || empty($telephone)) {
 			Errors::add("All fields are required");
@@ -438,6 +439,19 @@ class User extends Pagination {
 						':payment_made' => $payment_made,
 						':id' => $id
 					]);
+
+					//update membership expiry date if needed
+					if(!empty($new_expire_date)) {
+						$q = DB::$db->prepare("
+							UPDATE users
+							SET membership_expiry_date = :date
+							WHERE id = :id
+						");
+						$q->execute([
+							':date' => $new_expire_date,
+							':id' => $id
+						]);
+					}
 				} catch(PDOException $ex) {
 					die($ex->getMessage());
 				}

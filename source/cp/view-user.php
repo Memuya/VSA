@@ -14,13 +14,15 @@ if(!Login::check("admin"))
 $_user = new User;
 
 //get ID and set page title (which is the user's username)
-$user = $_user->get((int)$_GET["id"]);
+$user = $_user->get((isset($_GET["id"]) ? (int)$_GET["id"] : 0));
 $title = ($_user->getCount() != 0) ? $user->username."'s Details" : "User Not Found";
 
 $t->setTitle("Edit ".$title);
 
 include $t->load("template/head.php");
 ?>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script>
 	$(document).ready(function() {
 		//update info with ajax
@@ -57,6 +59,9 @@ include $t->load("template/head.php");
 
 			return false;
 		});
+
+		//datepicker
+		$("#new_expire_date").datepicker({dateFormat: 'yy-mm-dd'});
 	});
 </script>
 <?php
@@ -79,6 +84,13 @@ include $t->load("template/header.php");
 							<tr>
 								<th>ID</th>
 								<td>#<?=str_pad($user->id, 4, 0, STR_PAD_LEFT);?></td>
+							</tr>
+							<tr>
+								<th>Valid Until</th>
+								<td>
+									<input type="text" name="new_expire_date" value="<?=date('Y-m-j', $user->membership_expiry_date)?>" id="new_expire_date">
+									<div class="fine-text" style="color: #333;"><?=date('jS M Y', $user->membership_expiry_date)?></div>
+								</td>
 							</tr>
 							<tr>
 								<th>Username</th>

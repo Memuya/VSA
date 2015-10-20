@@ -21,6 +21,7 @@ $active = (isset($_POST['active'])) ? $_POST['active'] : $user->get($_SESSION['l
 $level = (isset($_POST['level'])) ? $_POST['level'] : $user->get($_SESSION['logged'])->level;
 $username = (isset($_POST['username'])) ? $_POST['username'] : $user->getUsername($_SESSION['logged']);
 $payment_made = (isset($_POST['payment_made'])) ? $_POST['payment_made'] : $user->get($_SESSION['logged'])->payment_made;
+$new_expire_date = (isset($_POST['new_expire_date'])) ? $_POST['new_expire_date'] : null;
 
 /**
 * These fields are only updated if the user is a corporate member
@@ -49,5 +50,6 @@ echo $user->edit(
 	$_POST['type'],
 	$active,
 	$level,
-	$payment_made
+	$payment_made,
+	$new_expire_date
 );

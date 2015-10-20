@@ -1,6 +1,7 @@
 <?php
 //defines the path name for links
 define("PATH", "http://localhost/vsa/");
+//define("PATH", "http://10.201.83.124/vsa/");
 
 //message to appear when a query fails on a page
 define("SQL_ERROR", '[SQL ERROR] There seems to be a problem with a query on this page. Please contact an administrator via our <a href="'.PATH.'contact">contact page</a>.');
@@ -15,7 +16,7 @@ ob_start();
 ini_set('session.cookie_lifetime', 60 * 60 * 24 * 7);
 
 //turn errors off when NOT in development
-//ini_set("display_errors", false);
+ini_set("display_errors", false);
 
 //start sessions
 session_start();
