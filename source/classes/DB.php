@@ -17,7 +17,7 @@ class DB {
 		try {
 			$this->connect();
 		} catch(PDOException $ex) {
-			die($ex->getMessage());
+			die"We could not contact the database. We apologize for any inconvenience.");
 		}
 	}
 
